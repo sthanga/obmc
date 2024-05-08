@@ -1,0 +1,6 @@
+To Create Meta layers is command as
+------> First do the setup of machine (. setup ast2600-default)
+    Enter the command 
+  bitbake-layers create-layer ../../meta-custom    (Here meta-custom is the meta layer)
+  bitbake-layers add-layer ../../meta-custom
+
