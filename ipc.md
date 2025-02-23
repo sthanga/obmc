@@ -1,4 +1,4 @@
-Inter-Process Communication (IPC) in Linux refers to a set of mechanisms that allow processes to communicate with each other and synchronize their actions. Since processes typically operate independently, IPC provides a way for them to share data and signals, enabling collaboration between processes.
+### Inter-Process Communication (IPC) in Linux refers to a set of mechanisms that allow processes to communicate with each other and synchronize their actions. Since processes typically operate independently, IPC provides a way for them to share data and signals, enabling collaboration between processes.
 
 Here’s a breakdown of the most common IPC mechanisms in Linux:
 
