@@ -152,3 +152,20 @@ https://github.com/openbmc/docs/blob/master/architecture/code-update/code-update
 root@ast2600-default:~# journalctl -f
 
 ```
+## Custom meta-folder for creating application
+``` bash
+
+
+meta-thanga
+
+
+
+
+
+```
+
+
+
+
+
+
