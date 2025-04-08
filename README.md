@@ -164,7 +164,32 @@ meta-thanga
 
 ```
 
+``` bash
+#/usr/bin$ ls *ctl
+bluetoothctl   
+bootctl
+coredumpctl
+hostnamectl
+localectl
+networkctl
+oomctl
+powerprofilesctl
+snapctl
+systemctl   - used
+udisksctl
+boltctl
+busctl   - used
+grdctl
+journalctl  - used
+loginctl
+obexctl
+pactl
+resolvectl
+switcherooctl
+timedatectl
+wdctl
 
+```
 
 
 
