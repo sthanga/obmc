@@ -4,9 +4,12 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 ---
 
 # **1. General OpenBMC Questions**  
-##🔹 **What is OpenBMC?**  
+## 🔹 **What is OpenBMC?**  
+```bash
 	OpenBMC is an open-source firmware stack for managing server hardware, commonly used in data centers.
-##🔹 What are the key features of OpenBMC? 
+```
+## 🔹 What are the key features of OpenBMC? 
+``` bash
 	Open-Source and Modular Architecture
 	Linux-Based Firmware
 	D-Bus for Inter-Process Communication
@@ -17,15 +20,18 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 	Multi-Platform & Vendor Support
 	Remote and Automated Management
 	Active Community and Ongoing Development
-##🔹 How does OpenBMC differ from traditional BMC firmware?  
+```
+## 🔹 How does OpenBMC differ from traditional BMC firmware?
+``` bash
 	open source, 
 	Security & Transparency, 
 	Management Interface & Protocols, 
 	Hardware & Platform Support, 
 	Update & Maintenance
 	Ecosystem & Industry Adoption
-	
-##🔹 What are the main components of OpenBMC?  
+``` 	
+## 🔹 What are the main components of OpenBMC?  
+``` bash
 	Yocto-Based Build System
 		Bitbake
 		Recipe (.bb files)
@@ -54,7 +60,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
  		Systemd-Networkd – Manages network settings.
 		DHCP, Static IP Support – Configures network access.
 		IPMI & Serial Console – Provides remote access for troubleshooting.
-##🔹 Can you explain the OpenBMC architecture? 
+```
+## 🔹 Can you explain the OpenBMC architecture?
+``` bash
 	OpenBMC consists of three main layers:
 		Hardware Layer – Physical components (BMC chip, sensors, fans, power control, etc.).
 		Firmware & OS Layer – Linux-based OS and essential system services.
@@ -86,19 +94,20 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 	- Find your built image
 		build/ast2600-default/tmp/deploy/images/<machine-name>/image-bmc
 ---
-
+```
 # **2. Yocto & Build System**  
-##🔹 What is the Yocto Project, and how is it used in OpenBMC?  
+## 🔹 What is the Yocto Project, and how is it used in OpenBMC?  
+``` bash
 	- The Yocto Project is an open-source collaboration project that provides tools, templates, and metadata for building
 	custom Linux distributions for embedded systems.
 	- It’s not a Linux distribution itself, but a framework to build your own.
 	- Think of it like a recipe book + kitchen that lets you bake a Linux image tailored to your specific hardware.
-###	- Key Components of Yocto
+	- Key Components of Yocto
 		-- BitBake: The task executor and scheduler (like a make tool for Yocto).
 		-- Recipes: Metadata files describing how to build packages (.bb files).
 		-- Layers: Logical collections of recipes/configurations (e.g., meta-aspeed, meta-facebook).
 		-- Poky: The reference distribution (includes BitBake + core metadata).
-### 	-How OpenBMC Uses Yocto
+	-How OpenBMC Uses Yocto
 		--OpenBMC is built on top of Yocto to generate lightweight Linux images tailored for 
 		Baseboard Management Controllers(BMCs). Here’s how:
 		-- 1. Layers
@@ -120,9 +129,10 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 				phosphor-network, 
 				phosphor-ipmi-host, 
 				phosphor-logging, etc.
-		
-##🔹 What are the key components of Yocto (BitBake, recipes, layers, etc.)? 
-###	Component	Role in Yocto
+``` 	
+## 🔹 What are the key components of Yocto (BitBake, recipes, layers, etc.)? 
+``` bash
+	Component	Role in Yocto
 	BitBake		Build engine
 	Recipes (.bb)	Define how to fetch, compile, and install SW
 	Layers		Modular organization of metadata
@@ -173,8 +183,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 			Core metadata
 			Example configurations
 		Many projects (including OpenBMC) use it as a base.
-		
-###🔹 How do you add a new package to OpenBMC using Yocto? 
+```		
+## 🔹 How do you add a new package to OpenBMC using Yocto? 
+``` bash
 	 1. Choose the Right Layer
 	 	 Add your package to meta-yourboard/recipes-yourpkg/yourpkg
 	 2. Create the Recipe
@@ -202,8 +213,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		5. Build the Image
 			bitbake yourpkg
 			bitbake obmc-phosphor-image
-		
-###🔹 How do you customize the OpenBMC build for a specific board?  
+```		
+## 🔹 How do you customize the OpenBMC build for a specific board? 
+``` bash
 	Step-by-Step: Customize OpenBMC for a Specific Board
 	✅ 1. Create a Custom Layer for Your Board (if not done yet)
 		You can use yocto-layer to create a base layer:
@@ -263,8 +275,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		bitbake -e | grep ^MACHINE=
 		Show layers:
 		bitbake-layers show-layers
-
-###🔹 How do you debug build failures in OpenBMC? 
+```
+## 🔹 How do you debug build failures in OpenBMC? 
+``` bash
 	1. Check the Error Logs
 		bitbake <failing-target> -c cleansstate
 		bitbake <failing-target> -c compile -v -f 
@@ -284,23 +297,29 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 			rm -rf tmp/ sstate-cache/
 			source setup <build-dir> <machine>
 			bitbake obmc-phosphor-image
-		
-###🔹 What are layers in Yocto, and how are they structured?  
+```		
+## 🔹 What are layers in Yocto, and how are they structured?  
+``` bash
 	Key Directories:
 		Directory	Purpose
 			conf/	Contains layer.conf, which tells bitbake how to handle this layer
 			recipes-*	Contains recipes grouped by function or domain
 			classes/	Optional directory for custom .bbclass files (shared behavior)
 			files/	Used within recipes to hold source files, configs, patches
-###🔹 How do you create a new recipe in Yocto?  
-		follow above input
+```
+## 🔹 How do you create a new recipe in Yocto?  
+### 		???
 ---
 
-## **3. Linux & System Programming**  
-###🔹 What Linux kernel version does OpenBMC use? 
+## **3. Linux & System Programming** 
+
+## 🔹 What Linux kernel version does OpenBMC use? 
+``` bash
 	 PREFERRED_VERSION_linux-aspeed = "5.10.97"
 	 openbmc 9.0 with 6.6.1
-###🔹 How does OpenBMC interact with the Linux kernel? 
+```
+## 🔹 How does OpenBMC interact with the Linux kernel? 
+``` bash
 	OpenBMC interacts with the Linux kernel in a tightly integrated way, since OpenBMC is a Linux-based firmware stack. 
 	1. Device Drivers
 		OpenBMC relies on Linux kernel drivers to interface with hardware:
@@ -331,8 +350,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 			Kernel boots and mounts rootfs (SquashFS or ext4)
 			systemd initializes userspace (OpenBMC services)
 
-
-###🔹 How do you debug kernel issues in OpenBMC?
+```
+## 🔹 How do you debug kernel issues in OpenBMC?
+``` bash
 		1. Enable Kernel Logging
 			Make sure the kernel has logging enabled with a reasonable log level (CONFIG_PRINTK, CONFIG_LOG_BUF_SHIFT, etc.).  
 			dmesg | less
@@ -359,7 +379,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 				(gdb) l *0xc000abcd
 		7.Reproduce & Isolate
 			bitbake -c menuconfig virtual/kernel
-###🔹 What is D-Bus, and how is it used in OpenBMC?  	
+``` 
+## 🔹 What is D-Bus, and how is it used in OpenBMC?  	
+``` bash
 		D-Bus (Desktop Bus) is an inter-process communication (IPC) system that allows multiple processes running concurrently 
 		on the same machine to communicate with each other. It is widely used in Linux systems — and in OpenBMC, it's core infrastructure.
 		D-Bus is a message bus system.
@@ -394,8 +416,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		  		/xyz/openbmc_project/state/host0 \
 		  		xyz.openbmc_project.State.Host \
 		  		RequestHostTransition s "xyz.openbmc_project.State.Host.Transition.On"
-
-###🔹 What is systemd, and how does OpenBMC manage services with it?  
+```
+## 🔹 What is systemd, and how does OpenBMC manage services with it?  
+``` bash
 	systemd is the init system and service manager used by most modern Linux distributions — including OpenBMC.
 	It boots the system, manages background services (daemons), and handles tasks like logging, timers, device events, 
 	and service dependencies.
@@ -437,8 +460,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		You can also monitor logs:
 			journalctl -u xyz.openbmc_project.HostName.service
 			journalctl -b
-			
-###🔹 How do you configure network settings in OpenBMC?
+``` 			
+## 🔹 How do you configure network settings in OpenBMC?
+``` bash
 		In OpenBMC, network settings (like IP address, hostname, DNS, etc.) are managed 
 		through D-Bus and systemd-networkd — and can be configured via:
 			✅ Redfish / Web UI
@@ -491,7 +515,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 			Gateway=192.168.1.1
 			DNS=8.8.8.8
 		systemctl restart systemd-networkd
-###🔹 What is IPMI, and how does OpenBMC handle it?  
+```
+## 🔹 What is IPMI, and how does OpenBMC handle it?  
+``` bash
 	IPMI (Intelligent Platform Management Interface) is a standardized interface used for out-of-band 
 	management of systems — allowing administrators to monitor, manage, and recover servers independently 
 	of the OS, even if the system is powered off or unresponsive.
@@ -520,12 +546,11 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		4. Network IPMI
 			Managed by the RMCP+ stack (via netipmid)
 			Communicates over UDP port 623 (standard IPMI port)
-
-
 ---
-
+```
 ## **4. Networking & Security**  
-###🔹 How does OpenBMC handle remote management of servers?  
+## 🔹 How does OpenBMC handle remote management of servers?  
+``` bash
 	OpenBMC enables remote server management by acting as a firmware stack for the 
 	Baseboard Management Controller (BMC) — a small, embedded microcontroller on server
 	motherboards. It provides administrators with full out-of-band (OOB) access to monitor
@@ -574,9 +599,10 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		Managing firmware
 		Accessing console
 		Network configuration
+```
 
-
-###🔹 How is Redfish used in OpenBMC?  
+## 🔹 How is Redfish used in OpenBMC?  
+``` bash
 	Redfish is a modern, RESTful management protocol used in OpenBMC to provide a standardized way to 
 	remotely manage servers — replacing older protocols like IPMI with a secure, scalable, and JSON-based interface.
 	Redfish in OpenBMC is implemented via the bmcweb service, which:
@@ -594,8 +620,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		 -H "Content-Type: application/json" \
 		 -H "X-Auth-Token: <token>" \
 		 -d '{"ResetType": "ForceRestart"}'
-
-###🔹 What authentication mechanisms does OpenBMC support?  
+```
+## 🔹 What authentication mechanisms does OpenBMC support? 
+``` bash
 	OpenBMC supports several authentication mechanisms to securely manage access to the BMC over various 
 	interfaces, especially for web UI, Redfish, and IPMI. Here's a breakdown:
 	1. Username and Password (Basic Authentication)
@@ -631,8 +658,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		IPMI uses its own user database (/etc/ipmi/users.conf or D-Bus).
 		Supports plaintext or cipher-based password authentication.
 		Not encrypted by default — it's recommended to use over secure networks or with VPNs.
-		
-###🔹 How do you secure an OpenBMC system?  
+```		
+## 🔹 How do you secure an OpenBMC system?  
+``` bash
 	Securing an OpenBMC system is crucial to prevent unauthorized access to sensitive hardware and 
 	ensure the integrity of server management operations. Here are the key steps and best practices 
 	to secure an OpenBMC deployment:
@@ -690,7 +718,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		User accounts and access logs.
 		Integrity of binaries and configurations.
 		Network traffic for unusual activity.
-###🔹 What are some common security vulnerabilities in OpenBMC?  
+```
+## 🔹 What are some common security vulnerabilities in OpenBMC?  
+``` bash
 	OpenBMC, like any embedded Linux-based system, can be vulnerable to various security issues 
 	if not properly configured and maintained. Here are some common security vulnerabilities seen in OpenBMC systems:
 
@@ -742,8 +772,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		Harden network exposure (firewalls, closed ports).
 		Audit systemd services and D-Bus policies.
 		Regular security scans and vulnerability assessments.
-
-###🔹 How does OpenBMC handle firmware updates?  
+```
+## 🔹 How does OpenBMC handle firmware updates?  
+``` bash
 	OpenBMC handles firmware updates using a secure, modular, and flexible mechanism built 
 	primarily on top of the Yocto build system and systemd services. Here's a breakdown of how it works:
 
@@ -811,7 +842,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		Check D-Bus logs via journalctl -u xyz.openbmc_project.Software*
 		Use busctl tree to explore active image objects.
 		Look into /var/lib/software for image storage.
-###🔹 What is TLS, and how is it used in OpenBMC?  
+```
+## 🔹 What is TLS, and how is it used in OpenBMC?  
+``` bash
 	TLS (Transport Layer Security) is a cryptographic protocol that ensures secure communication 
 	over networks by encrypting data, verifying identities, and ensuring message integrity.
 
@@ -867,9 +900,10 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		Rotate certificates regularly.
 
 ---
-
+```
 ## **5. Debugging & Development**  
-###🔹 How do you log information in OpenBMC?  
+## 🔹 How do you log information in OpenBMC?  
+``` bash
 	Logging in OpenBMC is crucial for monitoring system activity, diagnosing issues, and auditing events. 
 	OpenBMC supports several logging mechanisms, primarily through journald, D-Bus, and the Redfish/IPMI interfaces.
 
@@ -914,8 +948,10 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		Use consistent log levels (INFO, WARNING, ERROR) via phosphor-logging.
 		Avoid flooding logs with repetitive messages.
 		Use Redfish or IPMI for log collection automation.
+```
 
-###🔹 What tools do you use for debugging OpenBMC issues?  
+## 🔹 What tools do you use for debugging OpenBMC issues?  
+``` bash
 	Debugging OpenBMC issues can involve a wide range of tools, depending on the layer you're working
 	 with (systemd services, kernel, D-Bus, hardware interfaces, etc.). Here’s a breakdown of commonly 
 	 used tools grouped by their use cases:
@@ -969,8 +1005,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 			Use strace to trace the binary (if crash or hang suspected)
 			Validate config files (YAML, JSON, unit files)
 			Use curl to test Redfish endpoints related to networking
-
-###🔹 How do you access the OpenBMC shell?  
+```
+## 🔹 How do you access the OpenBMC shell?  
+``` bash
 	To access the OpenBMC shell, you're essentially trying to get into the BMC's Linux shell environment, 
 	typically via SSH. Here's how to do it:
 
@@ -998,7 +1035,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		On production systems, you might need to:
 		Use secure keys (SSH keys) instead of password.
 		Authenticate via Redfish to enable shell access in secure environments.
-###🔹 How do you reset an OpenBMC device?  
+``` 
+## 🔹 How do you reset an OpenBMC device?  
+``` bash
 	Resetting an OpenBMC device can be done in multiple ways, depending on what you mean by "reset"—whether
 	you're restarting the BMC firmware, doing a cold reboot, factory resetting settings, 
 	or resetting the host system it manages.
@@ -1031,7 +1070,9 @@ OpenBMC is an open-source firmware stack for managing server hardware, commonly 
 		Use flashcp or update tools
 		Boot into U-Boot and flash manually
 		Use an external programmer (e.g., SPI flasher)
-###🔹 How do you update OpenBMC firmware on a device?  
+```
+## 🔹 How do you update OpenBMC firmware on a device?  
+``` bash
 Updating the OpenBMC firmware on a device can be done through several methods, 
 depending on how your platform is configured. Below are the common ways to update the firmware:
 
@@ -1080,8 +1121,9 @@ depending on how your platform is configured. Below are the common ways to updat
 		The image must be in a compatible format (.tar, .pnor, .bin) based on your machine.
 		Use signed firmware if secure boot is enforced.
 		Always verify the hash/signature before flashing in production environments.
-
-###🔹 What are phosphor-logging and phosphor-dbus?  
+```
+## 🔹 What are phosphor-logging and phosphor-dbus?  
+``` bash
 In the context of OpenBMC, both phosphor-logging and phosphor-dbus are key components developed 
 under the Phosphor Project, which is a set of open-source base services that form the backbone 
 of OpenBMC. Here's what they are:
@@ -1117,9 +1159,10 @@ Purpose:
 		Services like phosphor-host-ipmid, phosphor-network, etc., use phosphor-dbus to interact with system state.
 
 ---
-
+```
 ## **6. BMC-Specific Knowledge**  
-###🔹 What is a Baseboard Management Controller (BMC)?  
+## 🔹 What is a Baseboard Management Controller (BMC)?  
+``` bash
 	A Baseboard Management Controller (BMC) is a specialized microcontroller embedded on a 
 	server's motherboard that manages the interface between system management software and the physical hardware.
 
@@ -1148,7 +1191,9 @@ Purpose:
 		IPMI (Intelligent Platform Management Interface) – legacy protocol
 		Redfish – modern, RESTful alternative
 		SNMP, SSH, KVM over IP, and others.
-###🔹 How does OpenBMC monitor hardware components like CPU temperature and fan speed? 
+```
+## 🔹 How does OpenBMC monitor hardware components like CPU temperature and fan speed? 
+``` bash
  OpenBMC monitors hardware components like CPU temperature, fan speed, voltage, and other sensors using a combination of:
 
 	🧩 1. Sensor Devices via I2C/SMBus
@@ -1190,7 +1235,9 @@ Purpose:
 		xyz.openbmc_project.Sensor.Value
 		Redfish or IPMI clients read it from the BMC.
 If threshold exceeded, system logs a warning and bumps fan speed via fan controller.
-###🔹 What is Redfish, and how is it implemented in OpenBMC?  
+```
+## 🔹 What is Redfish, and how is it implemented in OpenBMC?  
+``` bash
 Redfish is a modern, RESTful interface standard developed by the DMTF (Distributed Management Task Force) 
 for managing servers, storage, and networking hardware. It provides a secure and scalable way to manage 
 devices via HTTPS and JSON-based APIs.
@@ -1236,8 +1283,9 @@ devices via HTTPS and JSON-based APIs.
 	API style		RESTful (HTTPS + JSON)
 	Security		TLS + Authentication
 	Usage			Power control, logging, sensor monitoring, configuration
-
-###🔹 How do sensors work in OpenBMC?  
+```
+## 🔹 How do sensors work in OpenBMC?  
+``` bash
 In OpenBMC, sensors are used to monitor the health and status of various hardware components such as 
 CPU temperature, fan speed, voltages, power usage, etc. These sensors play a critical role in system 
 management and diagnostics.
@@ -1294,8 +1342,9 @@ Linux kernel drivers	Expose sensor readings via sysfs
 phosphor-hwmon			Reads sysfs, pushes to D-Bus
 D-Bus					Central communication channel
 Redfish/IPMI			Expose to external systems
-
-###🔹 What is PLDM, and how does OpenBMC use it?  
+```
+## 🔹 What is PLDM, and how does OpenBMC use it?  
+``` bash
 PLDM (Platform Level Data Model) is a standardized protocol defined by the DMTF (Distributed Management Task Force). 
 It's designed for platform management — allowing various components (like BMCs, BIOS, and management controllers) 
 to communicate using a common model over different transport layers (like MCTP, SMBus, PCIe, etc.).
@@ -1347,7 +1396,9 @@ to communicate using a common model over different transport layers (like MCTP, 
 	Modular platform management		Sensor, BIOS, firmware update support
 	Host-BMC communication			Over MCTP via SMBus/LPC/PCIe
 	Replaces legacy IPMI			Modern alternative for newer systems
-###🔹 How do you integrate a new hardware sensor into OpenBMC?  
+``` 
+## 🔹 How do you integrate a new hardware sensor into OpenBMC?
+``` bash
 Integrating a new hardware sensor into OpenBMC involves several steps, from device driver support to 
 D-Bus and Redfish integration. Here's a full guide to get you started:
 
@@ -1420,7 +1471,9 @@ D-Bus and Redfish integration. Here's a full guide to get you started:
 	busctl get-property xyz.openbmc_project.HwmonSensor /xyz/openbmc_project/sensors/temperature/TempSensor1 \
 	xyz.openbmc_project.Sensor.Value Value
 ---
-### What is the difference between IPMI and Redfish
+```
+##  What is the difference between IPMI and Redfish
+``` bash
 	The difference between IPMI and Redfish lies in their design, architecture, and capabilities. Here's a breakdown:
 	1. Protocol Design
 		Feature					IPMI											Redfish
@@ -1450,8 +1503,8 @@ D-Bus and Redfish integration. Here's a full guide to get you started:
 			IPMI for backward compatibility
 			Redfish as the primary modern interface
 			
-			
-### **🔹 Tips for Preparing:**
+```			
+##  **🔹 Tips for Preparing:**
 1. **Set up OpenBMC locally** – Try building it for a supported board.  
 2. **Learn Yocto deeply** – Since OpenBMC is built using Yocto, understanding it is crucial.  
 3. **Understand D-Bus** – Many OpenBMC services communicate via D-Bus.  
@@ -1459,8 +1512,7 @@ D-Bus and Redfish integration. Here's a full guide to get you started:
 5. **Practice debugging** – Be familiar with journalctl, systemd logs, and Yocto debugging.  
 
 Would you like help with any specific topic? 🚀
-
-
+``` bash
 DBus
 	Bus Types:
 		system Bus
@@ -1519,7 +1571,7 @@ Smart Pointer
 	Multi level thread
 	RMII in C++
 	RTOS Queue
-	
+```	
 	
 	
 	
