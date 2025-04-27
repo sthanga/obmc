@@ -1,3 +1,4 @@
+##  [Linux Commands] https://www.geeksforgeeks.org/linux-commands/
 #### bitbake-layers create-layer ../../layers/meta-custom
 ####  bitbake-layers add-layer ../../meta-custom
 
