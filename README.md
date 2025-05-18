@@ -155,8 +155,6 @@ root@ast2600-default:~# journalctl -f
 ```
 ## Custom meta-folder for creating application
 ``` bash
-
-
 meta-thanga
 
 
@@ -189,6 +187,38 @@ resolvectl
 switcherooctl
 timedatectl
 wdctl
+
+```
+
+
+``` bash
+*********** busctl concept *****************
+
+root@ast2600-default-secure:~# busctl tree | grep softtamper
+      `-/xyz/openbmc_project/Chassis/softtamper
+      `-/xyz/openbmc_project/Chassis/softtamper
+      `-/xyz/openbmc_project/Chassis/softtamper
+Service xyz.openbmc_project.Chassis.softtamper0:
+      `-/xyz/openbmc_project/Chassis/softtamper
+root@ast2600-default-secure:~# busctl introspect xyz.openbmc_project.Chassis.softtamper0 /xyz/openbmc_project/Chassis/softtamper
+NAME                                   TYPE      SIGNATURE RESULT/VALUE                             FLAGS
+org.freedesktop.DBus.Introspectable    interface -         -                                        -
+.Introspect                            method    -         s                                        -
+org.freedesktop.DBus.Peer              interface -         -                                        -
+.GetMachineId                          method    -         s                                        -
+.Ping                                  method    -         -                                        -
+org.freedesktop.DBus.Properties        interface -         -                                        -
+.Get                                   method    ss        v                                        -
+.GetAll                                method    s         a{sv}                                    -
+.Set                                   method    ssv       -                                        -
+.PropertiesChanged                     signal    sa{sv}as  -                                        -
+xyz.openbmc_project.Chassis.softtamper interface -         -                                        -
+.Status                                property  s         "xyz.openbmc_project.Chassis.softtamp... emits-change
+root@ast2600-default-secure:~#
+root@ast2600-default-secure:~# 
+root@ast2600-default-secure:~# busctl get-property xyz.openbmc_project.Chassis.chassiskeylock_r0   /xyz/openbmc_project/Chassis/chassiskeylock_r   xyz.openbmc_project.Chassis.chassiskeylock_r   Status
+s "xyz.openbmc_project.Chassis.chassiskeylock_r.KEYLOCK_R_STS"
+
 
 ```
 
