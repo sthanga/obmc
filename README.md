@@ -443,4 +443,84 @@ int a ;
 ```
 
 
+``` bash
+
+*******************************************************************************************************************************************
+curl -k -u root:0penBmc https://192.168.1.58/redfish/v1/UpdateService
+
+*******************************************************************************************************************************************
+curl -k -u root:0penBmc -X POST -H "Content-Type: appication/json" -d '{"ResetType":"GracefulRestart"}' https://192.168.1.58/redfish/v1/Managers/bmc/Actions/Manager.Reset
+
+*******************************************************************************************************************************************
+
+curl -k -u root:0penBmc-X POST -H "Content-Type: application/json" -d '{"ResetType":"ForceRestart"}' https://192.168.1.58/redfish/v1/Managers/bmc/Actions/Manager.Reset
+*******************************************************************************************************************************************
+
+curl -k -u root:0penBmc https://192.168.1.58/redfish/v1/Managers/bmc/EthernetInterfaces/eth0
+*******************************************************************************************************************************************
+
+curl -k -u root:0penBmc https://192.168.1.58/redfish/v1/Managers/bmc/EthernetInterfaces/bond0
+*******************************************************************************************************************************************
+
+curl -k -u root:0penBmc -X PATCH -H "Content-Type: application/json" -d '{"Image": "/redfish/v1/UpdateService/FirmwareInventory/80ab32ad
+"}' https://192.168.1.58/redfish/v1/Managers/bmc
+*******************************************************************************************************************************************
+
+curl -k -u root:0penBmc -X PATCH -H "Content-Type: application/json" -d '{"Image": "/redfish/v1/UpdateService/FirmwareInventory/80ab32ad"}' https://192.168.1.58/redfish/v1/Managers/bmc -v
+*******************************************************************************************************************************************
+Step-1:
+uri=$(curl -k -u <BMC_USER:BMC_PASSWORD> https://<BMC_IP>/redfish/v1/UpdateService | jq -r ' .HttpPushUri')
+
+Step-2:
+curl -k -u <BMC_USER:BMC_PASSWORD> -H "Content-Type: application/octet-stream" -X POST -T <.mtd.all.tar file> https://<BMC_IP>${uri}
+
+
+************************************************that is ***********************************************************************************
+
+step = 1 :
+uri=$(curl -k -u root:0penBmc https://192.168.1.42/redfish/v1/UpdateService | jq -r ' .HttpPushUri')
+step = 2 :
+curl -k -u root:0penBmc -H "Content-Type: application/octet-stream" -X POST -T /home/skthanga/PrimSecTest/test.static.mtd.all.tar https://192.168.1.42${uri}
+
+curl -k -u root:0penBmc -H "Content-Type: application/octet-stream" "Selection-Type: Primary"-X POST -T /home/user/obmc-def.static.mtd.all.tar https://192.168.1.39${uri}
+*******************************************************************************************************************************************
+
+curl -k -u root:0penBmc -X POST -H "Content-Type: application/json" -d '{"ImageURI": "http://192.168.1.32:8080/obmc-phosphor-image-ast2600-default-20250228060956.static.mtd.all.tar"}' https://192.168.1.32/redfish/v1/UpdateService
+
+*******************************************************************************************************************************************
+
+}user@dell:~$ curl -k -u root:0penBmc https://192.168.1.32/redfish/v1/UpdateService/FirmwareInventory
+{
+  "@odata.id": "/redfish/v1/UpdateService/FirmwareInventory",
+  "@odata.type": "#SoftwareInventoryCollection.SoftwareInventoryCollection",
+  "Members": [
+    {
+      "@odata.id": "/redfish/v1/UpdateService/FirmwareInventory/32f4d2a6"
+    }
+  ],
+  "Members@odata.count": 1,
+  "Name": "Software Inventory Collection"
+
+*******************************************************************************************************************************************
+
+root@ast2600-default:~# busctl tree | grep xyz.openbmc_project.Software           
+	xyz.openbmc_project.Software.BMC.Updater
+	xyz.openbmc_project.Software.Download
+	xyz.openbmc_project.Software.Version
+	xyz.openbmc_project.Software.Sync
+
+*******************************************************************************************************************************************
+
+curl -k -X POST -H "Content-Type: application/json" -d '{ "ImageURI": "tftp://192.168.1.24/obmc.static.mtd.tar"}' -u root:0penBmc https://192.168.1.60/redfish/v1/UpdateService/Actions/UpdateService.SimpleUpdate
+
+
+*******************************************************************************************************************************************
+https://github.com/openbmc/docs/blob/master/architecture/code-update/code-update.md#steps-to-update
+
+
+*******************************************************************************************************************************************
+root@ast2600-default:~# journalctl -f
+
+```
+
 
