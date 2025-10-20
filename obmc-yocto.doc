@@ -3,4 +3,839 @@ To Create Meta layers is command as
     Enter the command 
   bitbake-layers create-layer ../../meta-custom    (Here meta-custom is the meta layer)
   bitbake-layers add-layer ../../meta-custom
+``` bash
+#Redfish Flash from primary boot to secodary chip
+spi -1 
+spi -2 
+
+
+cs0 - spi1 primary ()- sf probe 0
+cs1 - spi2 secodary() - sf probe 1
+
+
+tftp image-bmc && sf probe 0 && sf update 83000000 0 4000000 && boot
+
+
+tftp image-bmc && sf probe 0 && sf erase 0 8000000 && sf probe 0 && sf update 83000000 0 4000000 && boot
+
+tftp image-bmcF && sf probe 0 && sf update 83000000 0 4000000 && boot
+
+tftp image-bmc && sf probe 0 && sf erase 0 4000000 && sf update 83000000 0 4000000 && boot
+
+tftp image_bmc_I2C && sf probe 1 && sf update 83000000 0 4000000 && boot
+
+sudo ifconfig enp44s0 down && sudo ifconfig enp44s0 192.168.1.4 up && ifconfig 
+
+sudo systemctl restart isc-dhcp-server && sudo systemctl enable isc-dhcp-server && sudo systemctl status isc-dhcp-server 
+
+	sudo systemctl restart tftpd-hpa && sudo systemctl status tftpd-hpa 
+
+busctl call xyz.openbmc_project.Ipmi.Channel.Ipmb /xyz/openbmc_project/Ipmi/Channel/Ipmb org.openbmc.Ipmb sendRequest yyyyay 4 6 0 1 0
+
+busctl call xyz.openbmc_project.Ipmi.Channel.Ipmb /xyz/openbmc_project/Ipmi/Channel/Ipmb org.openbmc.Ipmb sendRequest yyyyay 0 6 0 1 0
+
+software
+modprobe ipmi_ipmb bmcaddr=0x20 retry_time_ms=500 max_retries=3
+sudo nano /etc/modprobe.d/ipmi_ipmb.conf 
+sudo systemctl enable ipmi_ipmb.service
+sudo systemctl start ipmi_ipmb.service 		
+
+
+phosphor-host-state-manager
+bmcweb.service
+-org.openbmc.HostIpmi.service
+-phosphor-ipmi-host.service
+-xyz.openbmc_project.EntityManager.service
+-xyz.openbmc_project.Inventory.Manager.service
+-xyz.openbmc_project.Network.service
+-xyz.openbmc_project.Settings.service
+-xyz.openbmc_project.Software.BMC.Updater.service
+-xyz.openbmc_project.ObjectMapper.service
+-xyz.openbmc_project.Software.Download.service
+-xyz.openbmc_project.Software.Version.service
+-xyz.openbmc_project.State.BMC.service     
+      
+ https://github.com/openbmc/bmcweb/blob/master/Redfish.md   // readme     
+      
+Look for files related to firmware, such as:
+
+configuration json files 
+===========firmware.json==============
+
+===========spi_flash.json=============
+
+{
+  "Name": "SPI Flash Configuration",
+  "Description": "Configures primary and secondary SPI flash",
+  "Devices": [
+    {
+      "Name": "PrimarySPI",
+      "Bus": 0,
+      "ChipSelect": 0,
+      "DevicePath": "/dev/mtd0",
+      "Purpose": "Firmware"
+    },
+    {
+      "Name": "SecondarySPI",
+      "Bus": 0,
+      "ChipSelect": 1,
+      "DevicePath": "/dev/mtd6",
+      "Purpose": "BackupFirmware"
+    }
+  ]
+}
+
+
+ast# print
+baudrate=115200
+boot_ast2700=echo "Boot from ${boot_device}!";if test ${boot_device} = mmc; then run bootmmc; fi;if test ${boot_device} = spi; then run bootss
+boot_device=spi
+boota=setenv bootpart 2; setenv rootfs rofs-a; run setmmcargs; ext4load mmc 0:${bootpart} ${loadaddr} fitImage && bootm; echo Error loading ke
+bootargs=console=ttyS4,115200n8 root=/dev/ram rw
+bootb=setenv bootpart 3; setenv rootfs rofs-b; run setmmcargs; ext4load mmc 0:${bootpart} ${loadaddr} fitImage && bootm; echo Error loading ke
+bootcmd=echo Boot from ${boot_device}; if test ${boot_device} = mmc; then run bootmmc; fi; if test ${boot_device} = spi; then run bootspi; fi;
+bootdelay=2
+bootfile=all.bin
+bootmmc=if test "${bootside}" = "b"; then run bootb; run boota; else run boota; run bootb; fi
+bootside=a
+bootspi=fdt addr 20160000 && fdt header get fitsize totalsize && cp.b 20160000 ${loadaddr} ${fitsize} && bootm; echo Error loading kernel FITe
+fdtcontroladdr=fcf55eb8
+gatewayip=192.168.0.1
+ipaddr=192.168.0.45
+loadaddr=0x83000000
+netmask=255.255.255.0
+rootfs=rofs-a
+serverip=192.168.0.81
+setmmcargs=setenv bootargs ${bootargs} rootwait root=PARTLABEL=${rootfs}
+stderr=serial@1e784000
+stdin=serial@1e784000
+stdout=serial@1e784000
+
+Environment size: 1265/131068 bytes
+
+
+
+
+CONFIG_INLINE_SPIN_UNLOCK_IRQ=y
+CONFIG_MUTEX_SPIN_ON_OWNER=y
+CONFIG_RWSEM_SPIN_ON_OWNER=y
+CONFIG_LOCK_SPIN_ON_OWNER=y
+# CONFIG_MTD_SPI_NAND is not set
+CONFIG_MTD_SPI_NOR=y
+# CONFIG_MTD_SPI_NOR_USE_4K_SECTORS is not set
+# CONFIG_MTD_SPI_NOR_SWP_DISABLE is not set
+CONFIG_MTD_SPI_NOR_SWP_DISABLE_ON_VOLATILE=y
+# CONFIG_MTD_SPI_NOR_SWP_KEEP is not set
+# CONFIG_SENSORS_LIS3_SPI is not set
+# CONFIG_SCSI_SPI_ATTRS is not set
+CONFIG_SPI=y
+# CONFIG_SPI_DEBUG is not set
+CONFIG_SPI_MASTER=y
+CONFIG_SPI_MEM=y
+# SPI Master Controller Drivers
+# CONFIG_SPI_ALTERA is not set
+
+# CONFIG_SPI_ASPEED_TXRX is not set
+# CONFIG_SPI_AXI_SPI_ENGINE is not set
+# CONFIG_SPI_BITBANG is not set
+# CONFIG_SPI_CADENCE is not set
+# CONFIG_SPI_CADENCE_QUADSPI is not set
+# CONFIG_SPI_CADENCE_XSPI is not set
+# CONFIG_SPI_DESIGNWARE is not set
+CONFIG_SPI_FSI=y
+# CONFIG_SPI_GPIO is not set
+# CONFIG_SPI_FSL_SPI is not set
+# CONFIG_SPI_MICROCHIP_CORE is not set
+# CONFIG_SPI_MICROCHIP_CORE_QSPI is not set
+# CONFIG_SPI_OC_TINY is not set
+# CONFIG_SPI_PCI1XXXX is not set
+# CONFIG_SPI_PXA2XX is not set
+# CONFIG_SPI_SC18IS602 is not set
+# CONFIG_SPI_SIFIVE is not set
+# CONFIG_SPI_SN_F_OSPI is not set
+# CONFIG_SPI_MXIC is not set
+# CONFIG_SPI_XCOMM is not set
+# CONFIG_SPI_XILINX is not set
+# CONFIG_SPI_ZYNQMP_GQSPI is not set
+# CONFIG_SPI_AMD is not set
+# SPI Multiplexer support
+# CONFIG_SPI_MUX is not set
+# SPI Protocol Masters
+# CONFIG_SPI_SPIDEV is not set
+# CONFIG_SPI_LOOPBACK_TEST is not set
+# CONFIG_SPI_TLE62X0 is not set
+# CONFIG_SPI_SLAVE is not set
+# SPI GPIO expanders
+# end of SPI GPIO expanders
+# CONFIG_SENSORS_LTC2947_SPI is not set
+# CONFIG_MFD_DA9052_SPI is not set
+# CONFIG_MFD_MC13XXX_SPI is not set
+# CONFIG_MFD_RK8XX_SPI is not set
+# CONFIG_MFD_TPS65912_SPI is not set
+# CONFIG_MFD_TPS6594_SPI is not set
+# CONFIG_MFD_ARIZONA_SPI is not set
+# CONFIG_MFD_WM831X_SPI is not set
+# CONFIG_MFD_INTEL_M10_BMC_SPI is not set
+# CONFIG_MFD_RSMU_SPI is not set
+# Media SPI Adapters
+# end of Media SPI Adapters
+# CONFIG_MMC_SPI is not set
+# CONFIG_LEDS_SPI_BYTE is not set
+# SPI RTC drivers
+CONFIG_RTC_I2C_AND_SPI=y
+# SPI and I2C RTC drivers
+# CONFIG_HWSPINLOCK is not set
+CONFIG_ASPEED_ESPI=y
+CONFIG_AST2600_ESPI=y
+# CONFIG_ADXL313_SPI is not set
+# CONFIG_ADXL345_SPI is not set
+# CONFIG_ADXL355_SPI is not set
+# CONFIG_ADXL367_SPI is not set
+# CONFIG_ADXL372_SPI is not set
+# CONFIG_FXLS8962AF_SPI is not set
+# CONFIG_IIO_KX022A_SPI is not set
+# CONFIG_MMA7455_SPI is not set
+# CONFIG_AD7606_IFACE_SPI is not set
+# CONFIG_AD5624R_SPI is not set
+# CONFIG_AD5686_SPI is not set
+# CONFIG_BMI160_SPI is not set
+# CONFIG_FXOS8700_SPI is not set
+# CONFIG_INV_ICM42600_SPI is not set
+# CONFIG_INV_MPU6050_SPI is not set
+# CONFIG_BMC150_MAGN_SPI is not set
+# CONFIG_SENSORS_HMC5843_SPI is not set
+# CONFIG_SENSORS_RM3100_SPI is not set
+CONFIG_BMP280_SPI=y
+# CONFIG_MPL115_SPI is not set
+# CONFIG_DEBUG_SPINLOCK is not set
+
+
+web page :
+
+https://github.com/openbmc/openbmc/issues/3566
+
+
+
+
+
+
+
+
+**************************************************************************************************************************************
+
+# Override to enable ipmbbridged service
+DISABLE_IPMBBRIDGED_SERVICE = "0"
+
+# Re-add the service if it was removed
+SYSTEMD_SERVICE:${PN} += " ipmb.service"
+
+# Ensure the service is installed and enabled by default
+SYSTEMD_AUTO_ENABLE:${PN} = "enable"
+
+
+Erasing block: 256/256 (100%) 
+Writing kb: 65536/65536 (100%) 
+Verifying kb[ 4106.853116] jffs2: notice: (2012) jffs2_build_xattr_subsystem: complete building xattr subsystem, 0 of xdatum (0 unchecked, 0 orphan) and 0 of xref (0 dead, 0 orphan) found.
+Verifying kb: 65536/65536 (100%) 
+
+ls: /run/initram[ 4109.512013] watchdog: watchdog0: watchdog did not stop!
+fs/image-*: No such file or directory
+Flash update completed.
+Resetting watchdog timeouts to -T 15
+watchdog: invalid number ' 15'
+Remaining mounts:
+tmpfs / tmpfs rw,nosuid,nodev,mode=755 0 0
+sys /sys sysfs rw,relatime 0 0
+dev /dev devtmpfs rw,relatime,size=955268k,nr_inodes=238817,mode=755 0 0
+tmpfs /run tmpfs rw,nosuid,nodev,mode=755 0 0
+proc /proc proc rw,relatime 0 0
+[ 4110.581049] reboot: Restarting system
+BSA2EP1c03
+
+U-Boot SPL 2019.04-v00.04.17 (Nov 24 2023 - 06:08:24 +0000)
+already initialized, Trying to boot from RAM
+## Checking hash(es) for Image uboot ... sha512,rsa4096:dev_bl2_4096+ OK
+## Checking hash(es) for Image fdt ... sha512,rsa4096:dev_bl2_4096+ OK
+
+
+
+U-Boot SPL 2019.04-v00.04.17 (Nov 24 2023 - 06:08:24 +0000)
+Trying to boot from RAM
+## Checking hash(es) for Image uboot ... sha512,rsa4096:dev_bl2_4096+ OK
+## Checking hash(es) for Image fdt ... sha512,rsa4096:dev_bl2_4096+ OK
+
+
+U-Boot 2019.04-v00.04.17 (Nov 24 2023 - 06:08:24 +0000)
+
+SOC: AST2600-A3 
+RST: Power On 
+Secure Boot: Mode_2, AES_RSA4096_SHA512
+FMC 2nd Boot (ABR): Enable, Dual flashes, Source: Primary
+eSPI Mode: SIO:Enable : SuperIO-2e
+Eth: MAC0: RMII/NCSI, MAC1: RMII/NCSI, MAC2: RMII/NCSI, MAC3: RMII/NCSI
+Model: AST2600 EVB
+DRAM:  already initialized, 2 GiB (capacity:2048 MiB, VGA:16 MiB, ECC:off)
+RC Bridge phy@1e6ed200 : Link down
+MMC:   
+
+sdhci_slot0@100: 1, sdhci_slot1@200: 2, emmc_slot0@100: 0
+Loading Environment from SPI Flash... SF: Detected s25fl512s_256k with page size 512 Bytes, erase size 256 KiB, total 64 MiB
+*** Warning - bad CRC, using default environment
+
+In:    serial@1e784000
+Out:   serial@1e784000
+Err:   serial@1e784000
+Model: AST2600 EVB
+Net:   
+Warning: ftgmac@1e670000 (eth0) using random MAC address - 1e:10:84:aa:6d:a8
+eth0: ftgmac@1e670000
+Hit any key to stop autoboot:  0 
+Boot from spi
+## Loading kernel from FIT Image at 83000000 ...
+   Using 'conf-aspeed_aspeed-ast2600-evb.dtb' configuration
+   Verifying Hash Integrity ... sha512,rsa4096:dev_bl3_4096+ OK
+   Trying 'kernel-1' kernel subimage
+     Description:  Linux kernel
+     Type:         Kernel Image
+     Compression:  uncompressed
+     Data Start:   0x83000134
+     Data Size:    5521928 Bytes = 5.3 MiB
+     Architecture: ARM
+     OS:           Linux
+     Load Address: 0x80000000
+     Entry Point:  0x80000000
+     Hash algo:    sha512
+     Hash value:   3709acc2c1d9068f2fb46d12645b59c37a4819a72ced9df073f73593ef8ed79dcac3c28663e72cd9d7d1007ff93ada830c01f3e07d79ff86f4981396545a2652
+   Verifying Hash Integrity ... sha512+ OK
+## Loading ramdisk from FIT Image at 83000000 ...
+   Using 'conf-aspeed_aspeed-ast2600-evb.dtb' configuration
+   Verifying Hash Integrity ... sha512,rsa4096:dev_bl3_4096+ OK
+   Trying 'ramdisk-1' ramdisk subimage
+     Description:  obmc-phosphor-initramfs
+     Type:         RAMDisk Image
+     Compression:  uncompressed
+     Data Start:   0x83552084
+     Data Size:    1045532 Bytes = 1021 KiB
+     Architecture: ARM
+     OS:           Linux
+     Load Address: unavailable
+     Entry Point:  unavailable
+     Hash algo:    sha512
+     Hash value:   4ebb2d4de4675b13920970dde82153c58e7f779f705d249c11377d13473f6b4a61596a9faa7b14284ed925c1af2cd1a2e102e05f4b4d40e737888bd525645cfa
+   Verifying Hash Integrity ... sha512+ OK
+## Loading fdt from FIT Image at 83000000 ...
+   Using 'conf-aspeed_aspeed-ast2600-evb.dtb' configuration
+   Verifying Hash Integrity ... sha512,rsa4096:dev_bl3_4096+ OK
+   Trying 'fdt-aspeed_aspeed-ast2600-evb.dtb' fdt subimage
+     Description:  Flattened Device Tree blob
+     Type:         Flat Device Tree
+     Compression:  uncompressed
+     Data Start:   0x83544478
+     Data Size:    56094 Bytes = 54.8 KiB
+     Architecture: ARM
+     Hash algo:    sha512
+     Hash value:   d71e6d3fe601f6ae8f8ddd489b7a35bbe0e19285e85358a9f14c8cca87ec836fc220e22a79aadabadaa0551e93588d12c3c41d4bc0780d17ca6c45596de18ef4
+   Verifying Hash Integrity ... sha512+ OK
+   Booting using the fdt blob at 0x83544478
+   Loading Kernel Image ... OK
+   Loading Ramdisk to 8ff00000, end 8ffff41c ... OK
+   Loading Device Tree to 8feef000, end 8feffb1d ... OK
+
+Starting kernel ...
+
+[    0.000000] Booting Linux on physical CPU 0xf00
+[    0.000000] Linux version 6.6.1-dirty-6b50a113e8fa-g6b50a113e8fa (oe-user@oe-host) (arm-openbmc-linux-gnueabi-gcc (GCC) 13.1.1 20230520, GNU ld (GNU Binutils) 2.40.0.20230419) #1 SMP Mon Dec 25 11:16:573
+
+
+
+Services :
+
+avahi-daemon.service
+bmcweb.service
+dbus-broker.service
+lpcsnoop.service
+nfs-statd.service
+nscd.service
+obmc-dump-monitor.service
+obmc-fru-fault-monitor.service
+org.openbmc.HostIpmi.service
+phosphor-ipmi-host.service
+phosphor-pid-control.service
+phosphor-systemd-target-monitor.service
+
+/usr/bin/phosphor-systemd-target-monitor -f 
+/etc/phosphor-systemd-target-monitor/phosphor-target-monitor-default.json -s 
+/etc/phosphor-systemd-target-monitor/phosphor-service-monitor-dn
+
+poweronstatemachine.service
+rotate-event-logs.service
+rpcbind.service
+|-rsyslog.service
+|-slpd-lite.service
+|-ssifbridge.service
+|-start-ipkvm.service
+| `-getty@tty1.service
+| `-hostlogger@ttyS2.service
+| `-obmc-console@ttyS2.service
+| `-obmc-console-ssh@2200.service
+-phosphor-certificate-manager@authority.service
+| | `-325 /usr/bin/phosphor-certificate-manager --endpoint ldap --path /etc/ssl/certs/authority --type authority --unit bmcweb.service
+| |-phosphor-certificate-manager@bmcweb.service
+| | `-326 /usr/bin/phosphor-certificate-manager --endpoint https --path /etc/ssl/certs/https/server.pem --type server --unit bmcweb.service
+| `-phosphor-certificate-manager@nslcd.service
+| |-phosphor-ipmi-kcs@ipmi-kcs1.service
+| |-phosphor-ipmi-kcs@ipmi-kcs2.service
+| |-phosphor-ipmi-kcs@ipmi-kcs3.service
+phosphor-ipmi-kcs@ipmi-kcs4.service
+phosphor-ipmi-kcs@ipmi-kcs5.service
+phosphor-ipmi-kcs@ipmi-kcs6.service
+phosphor-ipmi-kcs@ipmi-kcs7.service
+phosphor-ipmi-kcs@ipmi-kcs8.service
+phosphor-ipmi-net@eth0.service
+phosphor-ipmi-net@eth1.service
+serial-getty@ttyS4.service
+grep service
+xyz.openbmc_project.State.Boot.PostCode@0.service
+xyz.openbmc_project.led.controller@sys-class-leds-bmc_identify.service
+xyz.openbmc_project.led.controller@sys-class-leds-fan0_failure.service
+xyz.openbmc_project.led.controller@sys-class-leds-mmc0::.service
+xyz.openbmc_project.led.controller@sys-class-leds-mmc1::.service
+xyz.openbmc_project.led.controller@sys-class-leds-mmc2::.service
+systemd-journald.service
+systemd-networkd.service
+systemd-resolved.service
+systemd-timesyncd.service
+systemd-udevd.service
+xyz.openbmc_project.Dump.Manager.service
+xyz.openbmc_project.EntityManager.service
+xyz.openbmc_project.FruDevice.service
+xyz.openbmc_project.Inventory.Manager.service
+xyz.openbmc_project.LED.GroupManager.service
+xyz.openbmc_project.Ldap.Config.service
+xyz.openbmc_project.Logging.IPMI.service
+xyz.openbmc_project.Logging.service
+xyz.openbmc_project.Network.service
+xyz.openbmc_project.ObjectMapper.service
+xyz.openbmc_project.Settings.service
+xyz.openbmc_project.Software.BMC.Updater.service
+xyz.openbmc_project.Software.Download.service
+xyz.openbmc_project.Software.Version.service
+xyz.openbmc_project.State.BMC.service
+xyz.openbmc_project.Syslog.Config.service
+xyz.openbmc_project.Telemetry.service
+xyz.openbmc_project.Time.Manager.service
+xyz.openbmc_project.User.Manager.service
+xyz.openbmc_project.adcsensor.service
+xyz.openbmc_project.exitairsensor.service
+xyz.openbmc_project.externalsensor.service
+xyz.openbmc_project.fansensor.service
+xyz.openbmc_project.hwmontempsensor.service
+xyz.openbmc_project.intelcpusensor.service
+xyz.openbmc_project.intrusionsensor.service
+xyz.openbmc_project.mcutempsensor.service
+xyz.openbmc_project.psusensor.service
+
+
+xyz.openbmc_project.Software.BMC.Updater.service
+	phosphor-software-manager  -- appl
+		-- bin ==> 
+	phosphor-software-manager
+https://github.com/openbmc/openbmc/issues/3949
+
+*******************************************************************************************************************************************
+curl -k -u root:0penBmc https://192.168.1.58/redfish/v1/UpdateService
+
+*******************************************************************************************************************************************
+curl -k -u root:0penBmc -X POST -H "Content-Type: appication/json" -d '{"ResetType":"GracefulRestart"}' https://192.168.1.58/redfish/v1/Managers/bmc/Actions/Manager.Reset
+
+*******************************************************************************************************************************************
+
+curl -k -u root:0penBmc-X POST -H "Content-Type: application/json" -d '{"ResetType":"ForceRestart"}' https://192.168.1.58/redfish/v1/Managers/bmc/Actions/Manager.Reset
+*******************************************************************************************************************************************
+
+curl -k -u root:0penBmc https://192.168.1.58/redfish/v1/Managers/bmc/EthernetInterfaces/eth0
+*******************************************************************************************************************************************
+
+curl -k -u root:0penBmc https://192.168.1.58/redfish/v1/Managers/bmc/EthernetInterfaces/bond0
+*******************************************************************************************************************************************
+
+curl -k -u root:0penBmc -X PATCH -H "Content-Type: application/json" -d '{"Image": "/redfish/v1/UpdateService/FirmwareInventory/80ab32ad
+"}' https://192.168.1.58/redfish/v1/Managers/bmc
+*******************************************************************************************************************************************
+
+curl -k -u root:0penBmc -X PATCH -H "Content-Type: application/json" -d '{"Image": "/redfish/v1/UpdateService/FirmwareInventory/80ab32ad"}' https://192.168.1.58/redfish/v1/Managers/bmc -v
+*******************************************************************************************************************************************
+Step-1:
+uri=$(curl -k -u <BMC_USER:BMC_PASSWORD> https://<BMC_IP>/redfish/v1/UpdateService | jq -r ' .HttpPushUri')
+
+Step-2:
+curl -k -u <BMC_USER:BMC_PASSWORD> -H "Content-Type: application/octet-stream" -X POST -T <.mtd.all.tar file> https://<BMC_IP>${uri}
+
+
+************************************************that is ***********************************************************************************
+
+step = 1 :
+uri=$(curl -k -u root:0penBmc https://192.168.1.42/redfish/v1/UpdateService | jq -r ' .HttpPushUri')
+step = 2 :
+curl -k -u root:0penBmc -H "Content-Type: application/octet-stream" -X POST -T /home/skthanga/PrimSecTest/test.static.mtd.all.tar https://192.168.1.42${uri}
+
+curl -k -u root:0penBmc -H "Content-Type: application/octet-stream" "Selection-Type: Primary"-X POST -T /home/user/obmc-def.static.mtd.all.tar https://192.168.1.39${uri}
+*******************************************************************************************************************************************
+
+curl -k -u root:0penBmc -X POST -H "Content-Type: application/json" -d '{"ImageURI": "http://192.168.1.32:8080/obmc-phosphor-image-ast2600-default-20250228060956.static.mtd.all.tar"}' https://192.168.1.32/redfish/v1/UpdateService
+
+*******************************************************************************************************************************************
+
+}user@BLRTSL01069:~$ curl -k -u root:0penBmc https://192.168.1.32/redfish/v1/UpdateService/FirmwareInventory
+{
+  "@odata.id": "/redfish/v1/UpdateService/FirmwareInventory",
+  "@odata.type": "#SoftwareInventoryCollection.SoftwareInventoryCollection",
+  "Members": [
+    {
+      "@odata.id": "/redfish/v1/UpdateService/FirmwareInventory/32f4d2a6"
+    }
+  ],
+  "Members@odata.count": 1,
+  "Name": "Software Inventory Collection"
+
+*******************************************************************************************************************************************
+
+root@ast2600-default:~# busctl tree | grep xyz.openbmc_project.Software           
+	xyz.openbmc_project.Software.BMC.Updater
+	xyz.openbmc_project.Software.Download
+	xyz.openbmc_project.Software.Version
+	xyz.openbmc_project.Software.Sync
+
+*******************************************************************************************************************************************
+
+curl -k -X POST -H "Content-Type: application/json" -d '{ "ImageURI": "tftp://192.168.1.24/obmc.static.mtd.tar"}' -u root:0penBmc https://192.168.1.60/redfish/v1/UpdateService/Actions/UpdateService.SimpleUpdate
+
+
+*******************************************************************************************************************************************
+https://github.com/openbmc/docs/blob/master/architecture/code-update/code-update.md#steps-to-update
+
+
+*******************************************************************************************************************************************
+root@ast2600-default:~# journalctl -f
+
+
+
+Host CPU PS fault
+Statusled
+Vbat
+
+
+
+The BMC shall poll VBAT once an hour. To poll the battery, the BMC shall:
+	a. Assert signal “BMC_VBAT_READ_EN”.
+	b. Take a voltage reading.
+	c.De-assert signal “BMC_VBAT_READ_EN”.
+
+
+
+
+HOST CPU POWER SUPPLY MONITORING
+1. Not implemented in schematic 213-000042-001.
+2. The BMC uses 1 GPIO as an input to detect a CPU Power Supply fault.
+3. HOST_CPU_PS_FAULT is an active high signal indicating a power supply fault of the CPU power supply.
+4. The CPLD will automatically attempt recovery by power cycling the board power supplies. HOST_CPU_PS_FAULT will remain high until the module recovers.
+5. After 30s, if the module does not recover, the BMC shall power down the module.
+6. Anytime HOST_CPU_PS_FAULT asserts, the event will be timestamped and stored in the SEL.
+
+
+
+
+To be fixed
+1. Fan sel asserted with outstatus strings for non recoverable
+2. Diagtest ipmitool sel 
+3. ipmi_sel log stores as volatail memory to be modify to non volatail
+4. redfish event logs to be fix with ( ADC voltage, Temperature, Fan, diagtest, secondary boot)
+
+
+Soft-tamper
+Hard-tamper
+Key locks
+ADC voltages
+Temperatures
+Secondary boot 
+Host CPU PS fault
+Fan failure
+
+
+busctl get-property xyz.openbmc_project.Network /xyz/openbmc_project/network/eth0 xyz.openbmc_project.Network.EthernetInterface DHCPEnabled
+
+busctl get-property xyz.openbmc_project.Network /xyz/openbmc_project/network/eth0 xyz.openbmc_project.Network.MACAddress MACAddress
+
+busctl call xyz.openbmc_project.Network /xyz/openbmc_project/network xyz.openbmc_project.Common.FactoryReset Reset
+
+
+
+ip link set eth0 down
+ip link set eth0 address 00:11:22:33:44:55
+ip addr flush dev eth0
+ip addr add 192.168.1.125/24 broadcast 192.168.1.33 dev eth0
+ip link set eth0 up
+ip route add default via 192.168.1.1 dev eth0
+ip link add default via address 00:11:22:33:44:55 dev eth0
+sysctl -w net.ipv6.conf.eth0.disable_ipv6=1   #disable
+
+
+
+root@ast2600-default:~# 
+root@ast2600-default:~# 
+root@ast2600-default:~# ifconfig 
+eth0      Link encap:Ethernet  HWaddr 00:11:22:33:44:55  
+          inet addr:192.168.1.125  Bcast:192.168.1.33  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:12 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:603 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:2498 (2.4 KiB)  TX bytes:115323 (112.6 KiB)
+          Interrupt:52 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:9164 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:9164 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:697729 (681.3 KiB)  TX bytes:697729 (681.3 KiB)
+
+
+root@ast2600-default:~# busctl tree xyz.openbmc_project.Network                                                                                                                        
+`-/xyz
+  `-/xyz/openbmc_project
+    `-/xyz/openbmc_project/network
+      |-/xyz/openbmc_project/network/bond0
+      |-/xyz/openbmc_project/network/config
+      |-/xyz/openbmc_project/network/dhcp
+      `-/xyz/openbmc_project/network/eth0
+root@ast2600-default:~# busctl introspect xyz.openbmc_project.Network /xyz/openbmc_project/network  
+
+
+file of dhcp address : /etc/systemd/network/00-bmc-eth0.network.
+ifconfig eth0 192.168.1.44 up
+Apr 04 00:20:26 ast2600-default avahi-daemon[328]: Registering new address record for 192.168.1.8 on eth0.IPv4.
+busctl get-property xyz.openbmc_project.Network /xyz/openbmc_project/network/eth0 xyz.openbmc_project.Network.EthernetInterface DHCPEnabled
+busctl get-property xyz.openbmc_project.Network /xyz/openbmc_project/network/eth0 xyz.openbmc_project.Network.MACAddress MACAddress
+busctl call xyz.openbmc_project.Network /xyz/openbmc_project/network xyz.openbmc_project.Common.FactoryReset Reset
+
+
+
+root@ast2600-default:~# busctl call \
+>   xyz.openbmc_project.Logging.IPMI \
+>   /xyz/openbmc_project/Logging/IPMI \
+>   xyz.openbmc_project.Logging.IPMI \
+>   IpmiSelAdd \
+>   "ssaybq" \
+>   "Temperature threshold exceeded" \
+>   "/xyz/openbmc_project/sensors/temperature/cpu0" \
+>   3 0x01 0x02 0x03 \
+>   false \
+>   0x20
+
+root@ast2600-default:~# busctl call \
+>   xyz.openbmc_project.Logging.IPMI \
+>   /xyz/openbmc_project/Logging/IPMI \
+>   xyz.openbmc_project.Logging.IPMI \
+>   IpmiSelAdd \
+>   "ssaybq" \
+>   "Temperature threshold exceeded" \
+>   "/xyz/openbmc_project/sensors/temperature/cpu0" \
+>   3 0x01 0x02 0x03 \
+>   true \
+>   0x20
+
+root@ast2600-default:~# busctl introspect xyz.openbmc_project.Logging.IPMI /xyz/openbmc_project/Logging/IPMI
+NAME                                TYPE      SIGNATURE RESULT/VALUE FLAGS
+org.freedesktop.DBus.Introspectable interface -         -            -
+.Introspect                         method    -         s            -
+org.freedesktop.DBus.Peer           interface -         -            -
+.GetMachineId                       method    -         s            -
+.Ping                               method    -         -            -
+org.freedesktop.DBus.Properties     interface -         -            -
+.Get                                method    ss        v            -
+.GetAll                             method    s         a{sv}        -
+.Set                                method    ssv       -            -
+.PropertiesChanged                  signal    sa{sv}as  -            -
+xyz.openbmc_project.Logging.IPMI    interface -         -            -
+.IpmiSelAdd                         method    ssaybq    -            -
+.IpmiSelAddOem                      method    sayy      -            -
+root@ast2600-default:~# 
+
+
+static constexpr const char* ipmiSelObject = "xyz.openbmc_project.Logging.IPMI";
+static constexpr const char* ipmiSelPath = "/xyz/openbmc_project/Logging/IPMI";
+static constexpr const char* ipmiSelAddInterface = "xyz.openbmc_project.Logging.IPMI";
+
+
+    conn->request_name(ipmiSelObject);
+    auto server = sdbusplus::asio::object_server(conn);
+
+    // Add SEL Interface
+    std::shared_ptr<sdbusplus::asio::dbus_interface> ifaceAddSel =
+        server.add_interface(ipmiSelPath, ipmiSelAddInterface);
+
+    // Add a new SEL entry
+    ifaceAddSel->register_method(
+        "IpmiSelAdd",
+        [](const std::string& message, const std::string& path,
+               const std::vector<uint8_t>& selData, const bool& assert,
+               const uint16_t& genId) {
+        return selAddSystemRecord(conn, message, path, selData, assert, genId);
+        });
+        
+    // Add a new OEM SEL entry
+    ifaceAddSel->register_method("IpmiSelAddOem",
+                                 [](const std::string& message,
+                                        const std::vector<uint8_t>& selData,
+                                        const uint8_t& recordType) {
+        return selAddOemRecord(conn, message, selData, recordType);
+    });
+
+xyz.openbmc_project.Logging.IPMI    interface -         -            -
+.IpmiSelAdd                         method    ssaybq    -            -
+
+| Index | Type | Meaning                                           |
+| ----- | ---- | ------------------------------------------------- |
+| 1     | `s`  | Message string (log text)                         | const std::string& message,
+| 2     | `s`  | Path to the associated object (can be empty `""`) | const std::string& path,
+| 3     | `ay` | Event data (array of bytes)                       | const std::vector<uint8_t>& selData
+| 4     | `b`  | Generator ID flag (`true` if generated by BMC)    | const bool& assert,
+| 5     | `q`  | Event ID (typically OEM or custom value)          | const uint16_t& genId
+
+
+busctl set-property xyz.openbmc_project.Network \
+    /xyz/openbmc_project/network/eth0 \
+    xyz.openbmc_project.Network.EthernetInterface \
+    BackupGatewayMAC s "00:11:22:33:44:55"
+
+
+busctl call xyz.openbmc_project.Network \
+           /xyz/openbmc_project/network/eth0 \
+           xyz.openbmc_project.Network.IP.Create \
+           IP ssys '192.168.1.125' 24 2 'v4'
+
+
+busctl get-property xyz.openbmc_project.Network \
+    /xyz/openbmc_project/network/eth0/_3192_2e168_2e1_2e108_2f24 \
+    xyz.openbmc_project.Network.IP \
+    Address
+
+busctl get-property xyz.openbmc_project.Network \
+    /xyz/openbmc_project/network/eth0/_3192_2e168_2e1_2e125_2f32 \
+    xyz.openbmc_project.Network.IP \
+    Address
+    
+busctl get-property xyz.openbmc_project.Network \
+    /xyz/openbmc_project/network/eth0/_3192_2e168_2e1_2e108_2f24 \
+    xyz.openbmc_project.Network.IP \
+    Address
+    
+root@ast2600-default:~#  busctl tree xyz.openbmc_project.EntityManager
+root@ast2600-default:~#  busctl tree xyz.openbmc_project.Network
+`-/xyz
+  `-/xyz/openbmc_project
+    `-/xyz/openbmc_project/network
+      |-/xyz/openbmc_project/network/bond0
+      |-/xyz/openbmc_project/network/config
+      |-/xyz/openbmc_project/network/dhcp
+      `-/xyz/openbmc_project/network/eth0
+        |-/xyz/openbmc_project/network/eth0/_3192_2e168_2e1_2e108_2f24
+        |-/xyz/openbmc_project/network/eth0/_3192_2e168_2e1_2e125_2f32
+        |-/xyz/openbmc_project/network/eth0/_3192_2e168_2e1_2e4
+        `-/xyz/openbmc_project/network/eth0/_3192_2e168_2e1_2e43
+
+
+root@ast2600-default:~# busctl tree xyz.openbmc_project.Network
+`-/xyz
+  `-/xyz/openbmc_project
+    `-/xyz/openbmc_project/network
+      |-/xyz/openbmc_project/network/bond0
+      |-/xyz/openbmc_project/network/config
+      |-/xyz/openbmc_project/network/dhcp
+      `-/xyz/openbmc_project/network/eth0
+        |-/xyz/openbmc_project/network/eth0/_3192_2e168_2e1_2e39_2f24
+        `-/xyz/openbmc_project/network/eth0/_66e80_3a_3ac6e_3a19ff_3afe4c_3aab57_2f64
+        
+        
+
+ip link set eth0 down
+ip link set eth0 address 00:11:22:33:44:55
+ip addr flush dev eth0
+ip addr add 192.168.1.125/24 broadcast 192.168.1.33 dev eth0
+ip link set eth0 up
+ip route add default via 192.168.1.1 dev eth0
+ip link add default via address 00:11:22:33:44:55 dev eth0
+sysctl -w net.ipv6.conf.eth0.disable_ipv6=1   #disable
+
+# 1. Bring down the interface (optional, safer for reconfiguration)
+ip link set eth0 down
+# 2. Remove existing IP addresses
+ip addr flush dev eth0
+# 3. Assign new IP address
+ip addr add 192.168.1.125 dev eth0
+# 4. Bring the interface up
+ip link set eth0 up
+
+ipmitool lan set 1 ipsrc static
+
+
+ipmitool lan set 1 ipaddr 192.168.1.92
+ipmitool lan set 1 netmask 255.255.255.0
+ipmitool lan set 1 macaddr c6:7d:48:5e:96:23 (lan IP will change if dhcp)
+
+ipmitool lan set 1 defgw ipaddr 192.168.1.4 (auto set if dhcp)
+ipmitool lan set 1 defgw macaddr 00:be:43:21:fe:c1 (lan IP will change if dhcp)
+
+ipmitool lan set 1 bakgw ipaddr 192.168.1.43
+ipmitool lan set 1 bakgw macaddr e4:54:e8:c8:65:41
+
+ 
+lan disable - every power cycle ;
+enable from host
+custom ip; test able to communicate; 
+dhcp range 20- 100; above set value ip; test the communication;
+
+Procedure to update ;
+enable and disable part;
+
+precondition to be add
+
+phosphor-dbus-interfaces
+networkctl status eth0
+busctl introspect  xyz.openbmc_project.Network /xyz/openbmc_project/network/eth0
+busctl tree xyz.openbmc_project.Network
+cat /usr/lib/systemd/network/99-default.link
+
+cat /run/systemd/netif/leases/*   # runtime lease data
+
+For Default Gate Way set 
+
+busctl set-property xyz.openbmc_project.Network \
+  /xyz/openbmc_project/network/eth0 \
+  xyz.openbmc_project.Network.EthernetInterface \
+  DefaultGateway s "192.168.1.5"
+  
+busctl set-property xyz.openbmc_project.Network \
+  /xyz/openbmc_project/network/eth0 \
+  xyz.openbmc_project.Network.EthernetInterface \
+  BackupGateway s "192.168.1.254"
+
+busctl get-property xyz.openbmc_project.Network \
+  /xyz/openbmc_project/network/eth0 \
+  xyz.openbmc_project.Network.EthernetInterface BackupGateway
+
+busctl set-property xyz.openbmc_project.Network \
+  /xyz/openbmc_project/network/eth0 \
+  xyz.openbmc_project.Network.EthernetInterface \
+  BackupGatewayMAC s "aa:bb:cc:dd:ee:aa"
+
+busctl get-property xyz.openbmc_project.Network \
+  /xyz/openbmc_project/network/eth0 \
+  xyz.openbmc_project.Network.EthernetInterface BackupGatewayMAC
+
+
+```
 
