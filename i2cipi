@@ -1,0 +1,1625 @@
+I2c to I2c - IPMI communication
+=+=> 18002026161 <=+=
+
+Soft Power Cycle - Chassis
+Hard Power Cycle -Chassis
+Hard Power Off - Chassis
+Power On - Chassis
+Power Reset - Chassis
+Status - Chassis
+
+
+vim ~/.vimrc
+set mouse=a
+set mouse=nvi
+netsat -an 
+service --status-all
+service status servicename ??
+kill -9 PID 
+pid off running process 
+		pgrep process_name 
+		pidof process_name
+		ps aux | grep process_name
+symbolic link in linux
+	ln -s source_file link_name
+owner of file         if (!slave_np)
+        {
+                pr_info("ipmi_ipmb Slave-np is null %d \n", __LINE__);
+        }
+	chown owner:group filename ??
+grep "string" filename
+
+type
+more
+free
+df
+du
+diskutil
+
+
+Temp : Type = "LM75A" @ast2600-evb.json file
+
+slave :
+echo slave-mqueue 0x15 > /sys/bus/i2c/devices/i2c-15/new_device
+master:
+i2cset -y -f 14 0x15 0x02 0x1234 w
+salve :
+hexdump -C /sys/bus/i2c/devices/i2c-0/0-0015/slave-mqueue
+
+Host to BMC :
+
+2cset -y -f 6 0x15 0x02 0x1234 w
+echo slave-mqueue 0x15 > /sys/bus/i2c/devices/i2c-0/new_device
+hexdump -C /sys/bus/i2c/devices/i2c-0/0-0015/slave-mqueue
+
+
+i2cget -y -f 14 0x15 raw 0x00 0x04 0x01
+
+{
+      "type": "ipmb",
+      "slave-path": "/dev/ipmb-15",
+      "bmc-addr": 36,
+      "remote-addr": 32,
+      "devIndex": 1
+}
+ 
+ipmitool interact with /dev/ipmi0, this driver compatability is ipmi-ipmb 
+cat /proc/devices | grep ipmidev
+237 ipmidev
+mknod /dev/ipmi0 c 237 0
+
+ipmitool -> {DBUS} -> ipmi [ipmi-msghaler , ipmidev]   -> { ssif , ipmb} -> i2c === i2c {ipmb, ssif}
+mw 1e620064 0
+dhcp
+
+git clone https://github.com/ipmitool/ipmitool.git
+./bootstrap
+./configure --host=aarch64-linux-gnu --disable-ipmishell
+make DESTDIR=/home/skthanga/nxp/nxpsetup/newsetup/ipmitool/ipmitool/img install
+
+
+tftp image-bmc && sf probe 0 && sf update 83000000 0 4000000 && boot
+
+
+tftp image-bmc && sf probe 0 && sf erase 0 8000000 && sf probe 0 && sf update 83000000 0 4000000 && boot
+
+tftp image-bmcF && sf probe 0 && sf update 83000000 0 4000000 && boot
+
+tftp image-bmc && sf probe 0 && sf erase 0 4000000 && sf update 83000000 0 4000000 && boot
+
+tftp image_bmc_I2C && sf probe 1 && sf update 83000000 0 4000000 && boot
+
+sudo ifconfig enp44s0 down && sudo ifconfig enp44s0 192.168.1.4 up && ifconfig 
+
+sudo systemctl restart isc-dhcp-server && sudo systemctl enable isc-dhcp-server && sudo systemctl status isc-dhcp-server 
+sudo systemctl restart isc-dhcp-server && sudo systemctl status isc-dhcp-server
+	sudo systemctl restart tftpd-hpa && sudo systemctl status tftpd-hpa 
+
+busctl call xyz.openbmc_project.Ipmi.Channel.Ipmb /xyz/openbmc_project/Ipmi/Channel/Ipmb org.openbmc.Ipmb sendRequest yyyyay 4 6 0 1 0
+
+busctl call xyz.openbmc_project.Ipmi.Channel.Ipmb /xyz/openbmc_project/Ipmi/Channel/Ipmb org.openbmc.Ipmb sendRequest yyyyay 0 6 0 1 0
+software
+modprobe ipmi_ipmb bmcaddr=0x20 retry_time_ms=500 max_retries=3
+sudo nano /etc/modprobe.d/ipmi_ipmb.conf 
+sudo systemctl enable ipmi_ipmb.service
+sudo systemctl start ipmi_ipmb.service 		
+
+test commands
+
+ls /dev/ipmi*
+zcat /proc/config.gz | grep IPMI
+cat /proc/devices | grep ipmidev
+ zcat /proc/config.gz | grep HOST
+ zcat /proc/config.gz | grep IPMB
+ 
+cat /proc/devices | grep ipmidev
+237 ipmidev
+mknod /dev/ipmi0 c 237 0
+chmod 666 /dev/ipmi0
+
+mknod /dev/ipmi/0 c 237 0 
+mknod /dev/ipmidev/0 c 237 0
+chmod 666 /dev/ipmi0
+chmod 666 /dev/ipmi/0
+chmod 666 /dev/ipmidev/0
+chown root:ipmi /dev/ipmidev/0
+chown root:ipmi /dev/ipmi0
+chgrp ipmi /dev/ipmi0 /dev/ipmi/0 /dev/ipmidev/0
+chmod 666 /dev/ipmi0 /dev/ipmi/0 /dev/ipmidev/0 
+ls -l /dev/ipmi0 /dev/ipmi/0 /dev/ipmidev/0
+
+modinfo ipmi_si
+
+============================
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+systemctl restart phosphor-ipmi-host.service
++++++++++++++++++++++++++++++++++++++++++
+lsmod
+	Module                  Size  Used by
+	ipmi_ssif              24576  -2
+	ipmi_devintf           16384  -2
+	ipmi_ipmb              12288  -2
+	ipmi_msghandler        57344  -2
+
+# dmesg | grep ipmi
+# rmmod ipmi_ssif
+
+
+&i2c0 {
+        status = "okay";
+        ipmb@17 {
+                compatible = "ipmb-dev";
+                reg = <(0x17 | I2C_OWN_SLAVE_ADDRESS)>;
+                i2c-protocol;
+        };
+
+};
+
+
+&i2c14 {
+        status = "okay";
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        ipmi-ipmb@15 {
+              compatible = "ipmi-ipmb";
+              device_type = "ipmi";
+              reg = <0x15>;
+              bmcaddr = <0x20>;
+              retry-time = <250>;
+              max-retries = <1>;
+              bmc-dev;
+        };
+};
+
+
+&i2c15 {
+        status = "okay";
+        ipmb@16 {
+                compatible = "ipmb-dev";
+                reg = <(0x16 | I2C_OWN_SLAVE_ADDRESS)>;
+                i2c-protocol;
+        };
+
+};
+
+
+Sikandar 	: 	working on chassis status/ analysing ipmitool source and follow the path of ipmitool chassis identify 
+bala	 	:   custom SEL entry  - inprogress
+Thangaraj 	: pmbus and chassis status support - inprogress 
+pranathi	: json file
+lalit  		:  PMbus and security resticted command for ipmitool debug/ lan enable/disable
+sourav 		:  Working in SEL part/ trail and error 
+ashish 		: ipmitool - firmware update/enable/disable  
+
+
+
+New test commands
+
+insmod ipmi_msghandler.ko 
+insmod ipmi_devintf.ko
+cat /proc/devices | grep ipmidev
+mknod /dev/ipmi0 c 237 0
+ls /dev/ipmi*
+i2cdetect -y 14
+i2cdetect -y 15
+ls -l /dev/ipm* 
+chmod 666 /dev/ipmi0
+ls -l /dev/ipm* 
+insmod ipmi_ipmb.ko
+ls
+insmod ipmi_ssif.ko
+mkdir -p /dev/ipmi
+mknod /dev/ipmi/0 c 237 0 
+chmod 666 /dev/ipmi/0
+mkdir -p /dev/ipmidev
+mkdir -p /dev/ipmidev
+mknod /dev/ipmidev/0 c 237 0
+chmod 666 /dev/ipmidev/0
+chown root:ipmi /dev/ipmidev/0
+chown root:ipmi /dev/ipmi0
+chgrp ipmi /dev/ipmi0 /dev/ipmi/0 /dev/ipmidev/0
+chmod 666 /dev/ipmi0 /dev/ipmi/0 /dev/ipmidev/0 
+ls -l /dev/ipmi0 /dev/ipmi/0 /dev/ipmidev/0
+
+ipmitool -I open chassis power status
+
+dmesg | grep -i ipmi
+
+lsmod
+ipmitool i2c bus=14 0x12 0x00 0x00 0x00 0x31 0x32 0x33 0x34
+ipmitool i2c bus=14 0x12 0x00 0x00 0x00 0x31 0x32 0x33 0x34
+busctl call xyz.openbmc_project.Ipmi.Channel.Ipmb /xyz/openbmc_project/Ipmi/Channel/Ipmb org.openbmc.Ipmb sendRequest yyyyay 4 6 0 1 0
+busctl call xyz.openbmc_project.Ipmi.Channel.Ipmb /xyz/openbmc_project/Ipmi/Channel/Ipmb org.openbmc.Ipmb sendRequest yyyyay 4 6 0 1 0
+ 
+cat /proc/kallsyms  | grep init_ipmi_si
+[root@host ~]# cat /proc/kallsyms  | grep init_ipmi_si
+
+ffffffff814fb086 t init_ipmi_si
+ffffffff81d26f50 t __initcall_init_ipmi_si6
+
+init_ipmi_si is the initialization function of the ipmi_si module. Same applies to ipmi_msghandler (look for ipmi_init_msghandler). So, your issues must be related to something else.
+
+this module has to be upload only ipmi_si.ko 
+
+% ipmitool mc reset cold 	
+
+
+
+ipmitool -I dbus raw 0x2e 2 0x79 0x2b 0x00 14 0 0x00 
+
+1. Load the driver:
+
+[root@mdw ~] modprobe ipmi_devintf
+2. Check to see whether the driver has been loaded:
+
+[root@smdw ~]# lsmod | grep -i ipmi 
+ipmi_devintf 7729 2
+3. Execute the ipmitool or ipmiutilcommand to verify that they have been executed successfully
+ 
+
+4. [Optional] If ipmitool or ipmiutil does not work after loading the drivers, try restarting the ipmi server using the command below:
+
+[root@smdw ~]# service ipmi restart
+Stopping all ipmi drivers: may be in use [FAILED]
+Starting ipmi drivers: [ OK ]
+
+modprobe ipmi_msghandler
+modprobe ipmi_devintf
+modprobe ipmi_si type=kcs ports=0xca8 regspacings=4
+
+Load the driver:
+
+modprobe ipmi_devintf
+This also will load the ipmi_si module too. Note dmesg output afterwards: it should mention the IPMI interface was found and device node /dev/ipmi0 (or something like this) should appear.
+
+If it works, add it to some file in the /etc/modules-load.d/ to auto-load on boot.
+
+3
+
+Here is another way to disable lan channel :
+
+ipmitool lan set 1 access off
+
+ipmitool raw 0x6 0x40 0x01 0x40 0x44
+ipmitool raw 0x6 0x40 0x01 0x80 0x84
+
+https://github.com/openbmc/openbmc/issues/1089
+
+./sound/i2c.h
+./linux/i2c.h
+./trace/events/i2c.h
+./uapi/linux/i2c.h
+./dt-bindings/i2c/i2c.h
+
+
+> &i2c4 {
+>    status = "okay";
+>    // BMC Debug Header
+>    ipmb0 at 10 {
+>      compatible = "ipmb-dev";
+>      reg = <0x10>;
+>      i2c-protocol;
+>    };
+> };
+
+If it's for BMC-ME channel, you should add 'multi-master;' to enable H/W
+arbitration. Also, you should set the slave address like below after
+including '#include <dt-bindings/i2c/i2c.h>' in dts file.
+
+reg = <(0x10 | I2C_OWN_SLAVE_ADDRESS)>;
+
+Cheers,
+
+Jae
+
+
+int
+is_valid_param(const char *input_param, uint8_t *uchr_ptr, const char *label) {
+        if (!input_param || !label) {
+                lprintf(LOG_ERROR, "ERROR: NULL pointer passed.");
+                return (-1);
+        }
+        if (str2uchar(input_param, uchr_ptr) == 0)
+                return 0;
+
+        lprintf(LOG_ERR, "Given %s \"%s\" is invalid.", label, input_param);
+        return (-1);
+}
+
+
+
+        memset(wdata, 0, IPMI_I2C_MASTER_MAX_SIZE);
+        for (; i < argc; i++) {
+                uint8_t val = 0;
+
+                if (is_valid_param(argv[i], &val, "parameter") != 0)
+                        return (-1);
+
+                wdata[wsize] = val;
+                wsize++;
+        }
+
+
+
+
+ipmitool chassis status ipmitool chassis identify [] # turn on front panel identify light (default 15s) 
+ipmitool [chassis] power soft # initiate a soft-shutdown via acpi 
+ipmitool [chassis] power cycle # issue a hard power off, wait 1s, power on 
+ipmitool [chassis] power off # issue a hard power off 
+ipmitool [chassis] power on # issue a hard power on 
+ipmitool [chassis] power reset # issue a hard reset
+
+
+
+https://www.tzulo.com/crm/knowledgebase/47/IPMI-and-IPMITOOL-Cheat-sheet.html
+
+
+tmp/work/armv7ahf-vfpv4d16-openbmc-linux-gnueabi/linux-libc-headers/6.1-r0/linux-6.1/drivers/i2c/i2c-core-slave.c:28:		dev_warn(&client->dev, "%s: client slave flag not set. You might see address collisions\n",
+grep: tmp/deploy/images/ast2600-default/vmlinux--6.6.1+git999-r0-ast2600-default-20240618131717.bin: binary file matches
+workspace/sources/linux-aspeed/drivers/i2c/i2c-core-slave.c:28:		dev_warn(&client->dev, "%s: client slave flag not set. You might see address collisions\n",
+user@BLRTSL01069:~/sk/openbmc/build/ast2600-default$ vim workspace/sources/linux-aspeed/drivers/i2c/i2c-core-slave.c
+
+
+
+linux-aspeed/MAINTAINERS.orig:9953:F:	drivers/i2c/i2c-slave-mqueue.c
+linux-aspeed/MAINTAINERS.orig:9954:F:	Documentation/i2c/slave-mqueue-backend.rst
+linux-aspeed/MAINTAINERS.orig:9955:F:	Documentation/devicetree/bindings/i2c/i2c-slave-mqueue.txt
+linux-aspeed/arch/arm/boot/dts/nuvoton/nuvoton-npcm750-runbmc-olympus.dts:323:	i2c-slave-mqueue@10 {
+linux-aspeed/arch/arm/boot/dts/nuvoton/nuvoton-npcm750-runbmc-olympus.dts:324:		compatible = "i2c-slave-mqueue";
+
+
+BMC IPMI daemon
+we will add an OEM Extension command for I2C transfer which will perform an I2C transfer and return the results
+
+
+
+/home/user/sk/openbmc/meta-phosphor/recipes-phosphor/ipmi/ipmitool/enterprise-numbers
+
+
+
+IANA_PEN = http://www.iana.org/assignments/enterprise-numbers
+
+
+IANA_PEN = https://www.iana.org/assignments/enterprise-numbers.txt
+
+IANA_PEN = /home/user/sk/openbmc/meta-phosphor/recipes-phosphor/ipmi/ipmitool/enterprise-numbers
+
+IANA_PEN = /home/user/enterprise-numbers
+
+chmod +r /home/user/enterprise-numbers
+49871
+  OpenBMC Project
+    Patrick Williams
+      patrick@stwcx.xyz
+
+
+
+Phosphor OpenBMC (Phosphor OpenBMC Project Reference Dis|  Cannot open /dev/ttyUSB1!  | ttyS4
+                                                        |                             |
+ast2600-default login: [  107.083948] lm75 8-004c: suppl+-----------------------------+ulator
+[  107.098659] i2c i2c-8: new_device: Instantiated device lm75a at 0x4c
+[  107.109440] i2c i2c-8: delete_device: Deleting device lm75a at 0x4c
+root
+Password: 
+
+Login incorrect
+ast2600-default login: root
+Password: 
+root@ast2600-default:~# 
+root@ast2600-default:~# 
+root@ast2600-default:~# 
+root@ast2600-default:~# ipmitool raw 6 4
+ipmi_raw_main: Inside Main RAW
+
+ 56 00
+root@ast2600-default:~# ipmitool i2c bus=14 0x12 0x00 0x00 0x00 0x31 0x32 0x33 0x34
+ipmi_rawi2c_main: Inside Main I2C RAW, lineNo:206
+
+ipmi_master_write_read: rsp_value:5916592, LineNo:104
+I2C Master Write-Read command failed: Invalid command
+ipmi_rawi2c_main: rsp_value:0, LineNo:264
+Unable to perform I2C Master Write-Read
+root@ast2600-default:~# 
+
+
+The error message indicates that the IPMI device files (`/dev/ipmi0`, `/dev/ipmi/0`, or `/dev/ipmidev/0`) do not exist on your system. This is typically because the IPMI drivers are not loaded or the IPMI device interface is not created. Here's a step-by-step guide to resolve this issue:
+
+
+If everything is set up correctly, you should see the sensor data records from your IPMI system.
+
+### Summary
+
+1. **Verify Kernel Support**: Ensure the kernel has IPMI support enabled.
+2. **Load Kernel Modules**: Load the necessary IPMI kernel modules (`ipmi_msghandler`, `ipmi_devintf`, `ipmi_si`).
+3. **Check Device Nodes**: Ensure the IPMI device nodes (`/dev/ipmi0`, `/dev/ipmi/0`, `/dev/ipmidev/0`) exist.
+4. **Create Device Nodes Manually**: If necessary, create the device nodes manually using `mknod`.
+5. **Verify Interface**: Use `ipmitool` to verify the IPMI interface is working.
+
+These steps should resolve the issue of missing IPMI device files.
+
+
+
+
+ drivers/char/ipmi/ipmb_device.h
+ * Usage:
+ *     #include <linux/ipmb_device.h>
+ *
+ *     if (ioctl(fd, IPMB_IOC_EN_IGNORE_NACK, NULL) == -1)
+ *         perror("IGNORE_NACK mode not supported");
+ * #define IPMB_IOC_MAGIC 217
+
+ * #define IPMB_IOC_EN_IGNORE_NACK         _IO(IPMB_IOC_MAGIC, 1)
+ * #define IPMB_IOC_DIS_IGNORE_NACK        _IO(IPMB_IOC_MAGIC, 2)
+
+ * #define IPMB_IOC_ENABLE_CHECKSUM        _IO(IPMB_IOC_MAGIC, 3)
+ * #define IPMB_IOC_DISABLE_CHECKSUM       _IO(IPMB_IOC_MAGIC, 4)
+
+
+
+
+
+Using pipes for inter-process communication (IPC) allows processes to communicate by sending data through a unidirectional channel. Pipes are commonly used for simpler communication needs between related processes (e.g., parent-child processes). Here’s how you can use pipes to interchange data between processes in C:
+
+### Overview
+
+1. **Create a Pipe**
+2. **Fork a Child Process**
+3. **Write Data to the Pipe from the Parent Process**
+4. **Read Data from the Pipe in the Child Process**
+
+### 1. Create a Pipe
+
+Pipes provide two file descriptors: one for reading and one for writing. You need to create a pipe and fork a child process to demonstrate communication.
+
+### Example Code
+
+Here’s a complete example showing how to use pipes for IPC:
+
+```c
+// pipe_example.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
+#define BUFFER_SIZE 256
+
+int main() {
+    int pipefd[2]; // Array to hold pipe file descriptors
+    pid_t pid;
+    char buffer[BUFFER_SIZE];
+    const char *message = "Hello from parent process!";
+
+    // Create a pipe
+    if (pipe(pipefd) == -1) {
+        perror("pipe");
+        exit(EXIT_FAILURE);
+    }
+
+    // Fork a child process
+    pid = fork();
+    if (pid < 0) {
+        perror("fork");
+        exit(EXIT_FAILURE);
+    }
+
+    if (pid == 0) { // Child process
+        // Close the write end of the pipe
+        close(pipefd[1]);
+
+        // Read data from the pipe
+        ssize_t bytesRead = read(pipefd[0], buffer, sizeof(buffer) - 1);
+        if (bytesRead < 0) {
+            perror("read");
+            exit(EXIT_FAILURE);
+        }
+
+        // Null-terminate the buffer and print the message
+        buffer[bytesRead] = '\0';
+        printf("Child process received: %s\n", buffer);
+
+        // Close the read end of the pipe
+        close(pipefd[0]);
+
+        exit(EXIT_SUCCESS);
+    } else { // Parent process
+        // Close the read end of the pipe
+        close(pipefd[0]);
+
+        // Write data to the pipe
+        if (write(pipefd[1], message, strlen(message)) < 0) {
+            perror("write");
+            exit(EXIT_FAILURE);
+        }
+
+        // Close the write end of the pipe
+        close(pipefd[1]);
+
+        // Wait for child process to finish
+        wait(NULL);
+
+        exit(EXIT_SUCCESS);
+    }
+}
+```
+
+### Explanation
+
+1. **Create a Pipe**: `pipe(pipefd)` creates a pipe and stores the file descriptors in `pipefd`. `pipefd[0]` is for reading, and `pipefd[1]` is for writing.
+
+2. **Fork a Child Process**: `fork()` creates a new process. The return value helps determine whether you’re in the parent or child process.
+
+3. **Parent Process**:
+   - **Write to Pipe**: The parent process writes a message to the pipe using `write(pipefd[1], message, strlen(message))`.
+   - **Close Write End**: It closes the write end of the pipe with `close(pipefd[1])`.
+
+4. **Child Process**:
+   - **Read from Pipe**: The child process reads from the pipe using `read(pipefd[0], buffer, sizeof(buffer) - 1)`.
+   - **Close Read End**: It closes the read end of the pipe with `close(pipefd[0])`.
+
+5. **Waiting for Child**: The parent process waits for the child process to complete with `wait(NULL)`.
+
+### Compilation
+
+To compile the example:
+
+```sh
+gcc -o pipe_example pipe_example.c
+```
+
+### Running the Program
+
+Run the compiled program with:
+
+```sh
+./pipe_example
+```
+
+### Cleanup
+
+There’s no explicit cleanup needed for pipes as they are automatically closed when the processes terminate. However, make sure you handle the closing of file descriptors properly to avoid resource leaks.
+
+### Summary
+
+This example demonstrates basic IPC using pipes. Pipes are suitable for simple communication between related processes. They are unidirectional, meaning that data flows in one direction (from writer to reader). For more complex IPC needs, such as bidirectional communication or communication between unrelated processes, you might consider other IPC mechanisms like message queues, shared memory, or sockets.
+
+
+
+To exchange data between multiple applications using message queues, you'll use System V message queues or POSIX message queues. These mechanisms are ideal for sending and receiving messages between processes. Below, I'll provide a detailed example using System V message queues, which are widely supported and commonly used for this purpose.
+
+### Overview
+
+1. **Define the Message Structure**
+2. **Create a Message Sending Application**
+3. **Create a Message Receiving Application**
+4. **Cleanup Script**
+
+### 1. Define the Message Structure
+
+First, define the message structure and key for the message queue in a header file.
+
+```c
+// message_queue.h
+#ifndef MESSAGE_QUEUE_H
+#define MESSAGE_QUEUE_H
+
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+
+#define MSG_KEY 1234  // Key for the message queue
+#define MSG_SIZE 256  // Size of the message payload
+
+// Message structure
+typedef struct {
+    long msg_type;       // Message type (should be > 0)
+    char msg_text[MSG_SIZE]; // Message content
+} Message;
+
+#endif // MESSAGE_QUEUE_H
+```
+
+### 2. Create a Message Sending Application
+
+This application sends messages to the message queue.
+
+```c
+// message_sender.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <string.h>
+#include "message_queue.h"
+
+int main() {
+    int msgid;
+    Message msg;
+
+    // Create or open the message queue
+    msgid = msgget(MSG_KEY, IPC_CREAT | 0666);
+    if (msgid < 0) {
+        perror("msgget");
+        exit(EXIT_FAILURE);
+    }
+
+    // Prepare the message
+    msg.msg_type = 1; // Message type must be > 0
+    snprintf(msg.msg_text, MSG_SIZE, "Hello from sender!");
+
+    // Send the message
+    if (msgsnd(msgid, &msg, sizeof(msg.msg_text), 0) < 0) {
+        perror("msgsnd");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Message sent: %s\n", msg.msg_text);
+
+    return 0;
+}
+```
+
+### 3. Create a Message Receiving Application
+
+This application receives messages from the message queue.
+
+```c
+// message_receiver.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <string.h>
+#include "message_queue.h"
+
+int main() {
+    int msgid;
+    Message msg;
+
+    // Open the message queue
+    msgid = msgget(MSG_KEY, 0666);
+    if (msgid < 0) {
+        perror("msgget");
+        exit(EXIT_FAILURE);
+    }
+
+    // Receive a message from the queue
+    if (msgrcv(msgid, &msg, sizeof(msg.msg_text), 1, 0) < 0) {
+        perror("msgrcv");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Message received: %s\n", msg.msg_text);
+
+    return 0;
+}
+```
+
+### 4. Cleanup Script
+
+To remove the message queue when it's no longer needed, use a cleanup script.
+
+```sh
+# cleanup.sh
+#!/bin/bash
+ipcrm -q 1234
+```
+
+### Compilation
+
+Compile the sender and receiver programs using:
+
+```sh
+gcc -o message_sender message_sender.c
+gcc -o message_receiver message_receiver.c
+```
+
+### Running the Programs
+
+1. **Send a message**:
+   ```sh
+   ./message_sender
+   ```
+
+2. **Receive the message**:
+   ```sh
+   ./message_receiver
+   ```
+
+3. **Cleanup the message queue**:
+   ```sh
+   ./cleanup.sh
+   ```
+
+### Explanation
+
+1. **Message Queue Definition**: `message_queue.h` defines the key for the message queue and the message structure.
+2. **Sender Application**: `message_sender.c` creates or opens the message queue and sends a message to it.
+3. **Receiver Application**: `message_receiver.c` opens the message queue and receives a message from it.
+4. **Cleanup**: `cleanup.sh` removes the message queue using `ipcrm`.
+
+### Summary
+
+This setup demonstrates how to use System V message queues for inter-process communication. The sender application places a message into the queue, while the receiver application retrieves the message. This method is useful for scenarios where processes need to exchange structured data or commands in a reliable manner.
+
+
+
+
+Using message queues is another effective method for inter-process communication (IPC). Message queues allow processes to send and receive messages in a FIFO (First In, First Out) manner. This method is often used when you need a structured way to exchange messages or commands between processes.
+
+### Overview
+
+In this setup, we will:
+1. **Create a message queue.**
+2. **Send messages to the queue from one application.**
+3. **Receive messages from the queue in another application.**
+
+### Steps to Implement Message Queue IPC
+
+1. **Define Message Structure**
+
+   You need to define a message structure that will be used for sending and receiving messages.
+
+   ```c
+   // message_queue.h
+   #ifndef MESSAGE_QUEUE_H
+   #define MESSAGE_QUEUE_H
+
+   #include <sys/types.h>
+   #include <sys/ipc.h>
+   #include <sys/msg.h>
+
+   #define MSG_KEY 1234  // Key for the message queue
+   #define MSG_SIZE 256  // Size of the message payload
+
+   // Message structure
+   typedef struct {
+       long msg_type;       // Message type (should be > 0)
+       char msg_text[MSG_SIZE]; // Message content
+   } Message;
+
+   #endif // MESSAGE_QUEUE_H
+   ```
+
+2. **Application to Send Messages to the Queue**
+
+   This application sends messages to the message queue.
+
+   ```c
+   // message_sender.c
+   #include <stdio.h>
+   #include <stdlib.h>
+   #include <sys/ipc.h>
+   #include <sys/msg.h>
+   #include <string.h>
+   #include "message_queue.h"
+
+   int main() {
+       int msgid;
+       Message msg;
+
+       // Create or open the message queue
+       msgid = msgget(MSG_KEY, IPC_CREAT | 0666);
+       if (msgid < 0) {
+           perror("msgget");
+           exit(EXIT_FAILURE);
+       }
+
+       // Set message type and content
+       msg.msg_type = 1; // Message type must be > 0
+       snprintf(msg.msg_text, MSG_SIZE, "Hello from sender!");
+
+       // Send message to the queue
+       if (msgsnd(msgid, &msg, sizeof(msg.msg_text), 0) < 0) {
+           perror("msgsnd");
+           exit(EXIT_FAILURE);
+       }
+
+       printf("Message sent: %s\n", msg.msg_text);
+
+       return 0;
+   }
+   ```
+
+3. **Application to Receive Messages from the Queue**
+
+   This application receives messages from the message queue.
+
+   ```c
+   // message_receiver.c
+   #include <stdio.h>
+   #include <stdlib.h>
+   #include <sys/ipc.h>
+   #include <sys/msg.h>
+   #include <string.h>
+   #include "message_queue.h"
+
+   int main() {
+       int msgid;
+       Message msg;
+
+       // Open the message queue
+       msgid = msgget(MSG_KEY, 0666);
+       if (msgid < 0) {
+           perror("msgget");
+           exit(EXIT_FAILURE);
+       }
+
+       // Receive message from the queue
+       if (msgrcv(msgid, &msg, sizeof(msg.msg_text), 1, 0) < 0) {
+           perror("msgrcv");
+           exit(EXIT_FAILURE);
+       }
+
+       printf("Message received: %s\n", msg.msg_text);
+
+       return 0;
+   }
+   ```
+
+4. **Cleanup Script**
+
+   Optionally, create a script to remove the message queue when it's no longer needed.
+
+   ```sh
+   # cleanup.sh
+   #!/bin/bash
+   ipcrm -q 1234
+   ```
+
+### Compilation
+
+To compile the programs:
+
+```sh
+gcc -o message_sender message_sender.c
+gcc -o message_receiver message_receiver.c
+```
+
+### Running the Programs
+
+1. **Send a message**:
+   ```sh
+   ./message_sender
+   ```
+
+2. **Receive the message**:
+   ```sh
+   ./message_receiver
+   ```
+
+3. **Cleanup the message queue**:
+   ```sh
+   ./cleanup.sh
+   ```
+
+### Explanation
+
+1. **Message Queue Definition**: `message_queue.h` defines the key and structure for messages in the queue.
+2. **Sender Application**: `message_sender.c` creates or opens the message queue, sends a message to it, and then exits.
+3. **Receiver Application**: `message_receiver.c` opens the message queue, receives a message from it, and then exits.
+4. **Cleanup**: `cleanup.sh` is used to remove the message queue by its key.
+
+### Summary
+
+Using message queues allows for a structured way to exchange messages between processes. The sender application places messages into the queue, while the receiver application retrieves them. This method is useful for scenarios where processes need to communicate in an orderly manner, such as sending commands, status updates, or data chunks between different applications.
+
+
+
+To enable common applications to interchange data, you can use various Inter-Process Communication (IPC) mechanisms. Shared memory is one of the efficient methods for this purpose. Below, I'll provide an example of how two applications can interchange data using shared memory, which will involve:
+
+1. **Creating a shared memory segment.**
+2. **Writing data to shared memory from one application.**
+3. **Reading data from shared memory in another application.**
+
+### 1. Define Shared Memory Structure
+
+You need a common header file to define the shared memory name and structure.
+
+```c
+// shared_memory.h
+#ifndef SHARED_MEMORY_H
+#define SHARED_MEMORY_H
+
+#define SHM_NAME "/my_shm"
+#define SHM_SIZE 1024  // Size of the shared memory in bytes
+
+// Define a structure to be shared
+typedef struct {
+    int data1;
+    float data2;
+    char text[256];
+} SharedData;
+
+#endif // SHARED_MEMORY_H
+```
+
+### 2. Application to Write Data to Shared Memory
+
+This application writes data into the shared memory segment.
+
+```c
+// writer.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
+#include "shared_memory.h"
+
+int main() {
+    int fd;
+    SharedData *shm_ptr;
+
+    // Open shared memory object
+    fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
+    if (fd < 0) {
+        perror("shm_open");
+        exit(EXIT_FAILURE);
+    }
+
+    // Set the size of the shared memory object
+    if (ftruncate(fd, SHM_SIZE) == -1) {
+        perror("ftruncate");
+        close(fd);
+        exit(EXIT_FAILURE);
+    }
+
+    // Map shared memory object into address space
+    shm_ptr = (SharedData *)mmap(0, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (shm_ptr == MAP_FAILED) {
+        perror("mmap");
+        close(fd);
+        exit(EXIT_FAILURE);
+    }
+
+    // Write data to shared memory
+    shm_ptr->data1 = 42;
+    shm_ptr->data2 = 3.14;
+    strcpy(shm_ptr->text, "Hello from writer!");
+
+    printf("Data written to shared memory:\n");
+    printf("data1: %d\n", shm_ptr->data1);
+    printf("data2: %.2f\n", shm_ptr->data2);
+    printf("text: %s\n", shm_ptr->text);
+
+    // Unmap and close
+    if (munmap(shm_ptr, SHM_SIZE) == -1) {
+        perror("munmap");
+    }
+    close(fd);
+
+    return 0;
+}
+```
+
+### 3. Application to Read Data from Shared Memory
+
+This application reads data from the shared memory segment.
+
+```c
+// reader.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include "shared_memory.h"
+
+int main() {
+    int fd;
+    SharedData *shm_ptr;
+
+    // Open shared memory object
+    fd = shm_open(SHM_NAME, O_RDWR, 0666);
+    if (fd < 0) {
+        perror("shm_open");
+        exit(EXIT_FAILURE);
+    }
+
+    // Map shared memory object into address space
+    shm_ptr = (SharedData *)mmap(0, SHM_SIZE, PROT_READ, MAP_SHARED, fd, 0);
+    if (shm_ptr == MAP_FAILED) {
+        perror("mmap");
+        close(fd);
+        exit(EXIT_FAILURE);
+    }
+
+    // Read data from shared memory
+    printf("Data read from shared memory:\n");
+    printf("data1: %d\n", shm_ptr->data1);
+    printf("data2: %.2f\n", shm_ptr->data2);
+    printf("text: %s\n", shm_ptr->text);
+
+    // Unmap and close
+    if (munmap(shm_ptr, SHM_SIZE) == -1) {
+        perror("munmap");
+    }
+    close(fd);
+
+    return 0;
+}
+```
+
+### 4. Cleanup Script
+
+To remove the shared memory object when it's no longer needed:
+
+```sh
+# cleanup.sh
+#!/bin/bash
+shm_unlink /my_shm
+```
+
+### Compilation
+
+Compile the programs with:
+
+```sh
+gcc -o writer writer.c -lrt
+gcc -o reader reader.c -lrt
+```
+
+### Running the Programs
+
+1. **Run the writer program** to write data into shared memory:
+
+   ```sh
+   ./writer
+   ```
+
+2. **Run the reader program** to read data from shared memory:
+
+   ```sh
+   ./reader
+   ```
+
+3. **Cleanup** the shared memory object:
+
+   ```sh
+   ./cleanup.sh
+   ```
+
+### Explanation
+
+1. **Shared Memory Definition**: `shared_memory.h` defines the shared memory name and data structure.
+2. **Writer Application**: `writer.c` creates or opens the shared memory, writes data into it, and then cleans up.
+3. **Reader Application**: `reader.c` reads data from the shared memory and prints it.
+4. **Cleanup**: `cleanup.sh` is used to remove the shared memory object when it's no longer needed.
+
+By using shared memory, both applications can efficiently share data without the overhead of other IPC mechanisms like pipes or message queues. This approach ensures that any changes made by the writer are immediately visible to the reader.
+
+
+
+Inter-Process Communication (IPC) is crucial for enabling processes to communicate and synchronize their actions when executing concurrently. Here are the main types of IPC:
+
+1. **Pipes**:
+   - **Anonymous Pipes**: Used for communication between parent and child processes or between processes that have a common ancestor. They are simple and one-way.
+   - **Named Pipes** (FIFOs): Allow communication between unrelated processes, and can be used for both one-way and two-way communication.
+
+2. **Message Queues**:
+   - Message queues enable processes to send and receive messages in a queue structure. Messages are typically stored until they are processed, allowing asynchronous communication.
+
+3. **Shared Memory**:
+   - In shared memory IPC, multiple processes are given access to a common memory space. This allows for fast data exchange but requires synchronization mechanisms to avoid data inconsistency.
+
+4. **Semaphores**:
+   - Semaphores are synchronization tools used to control access to shared resources by multiple processes. They can be used to signal and coordinate processes.
+
+5. **Signals**:
+   - Signals are notifications sent to a process to indicate an event or interrupt its normal execution. They can be used for handling asynchronous events or simple inter-process notifications.
+
+6. **Sockets**:
+   - Sockets are used for network communication between processes, which can be on the same machine or across different machines over a network. They support both TCP (stream-oriented) and UDP (datagram-oriented) protocols.
+
+7. **Memory-Mapped Files**:
+   - Memory-mapped files allow processes to map a file or a portion of a file into memory. This provides a way for processes to share data by reading and writing to the same memory space.
+
+8. **Remote Procedure Calls (RPC)**:
+   - RPC allows a process to execute a procedure in another address space (often on a different machine). It abstracts the communication process and presents a simple interface for remote procedure execution.
+
+9. **Signals and Events**:
+   - Used for notifying processes about specific events or conditions. They are often used in combination with other IPC mechanisms like semaphores.
+
+Each IPC type has its advantages and use cases, and the choice of IPC mechanism depends on factors like performance requirements, ease of implementation, and the specific needs of the application.
+
+
+
+
+Disabling the `eth0` network interface in a Linux-based system, including OpenBMC, typically involves using command-line utilities like `ip` or `ifconfig`. Here’s how you can do it:
+
+### Using `ip` Command
+
+1. **Check the Current Status of `eth0`:**
+
+   Before disabling the interface, you might want to check its current status.
+
+   ```sh
+   ip addr show eth0
+   ```
+
+2. **Disable the `eth0` Interface:**
+
+   To disable (bring down) the `eth0` interface:
+
+   ```sh
+   ip link set eth0 down
+   ```
+
+   This command will bring the network interface `eth0` down, effectively disabling it.
+
+### Using `ifconfig` Command
+
+Note: `ifconfig` is deprecated in favor of `ip`, but it might still be available on some systems.
+
+1. **Check the Current Status of `eth0`:**
+
+   ```sh
+   ifconfig eth0
+   ```
+
+2. **Disable the `eth0` Interface:**
+
+   To disable `eth0`:
+
+   ```sh
+   ifconfig eth0 down
+   ```
+
+   This will also bring the interface down and disable it.
+
+### Persisting Changes (Optional)
+
+Disabling an interface temporarily via `ip` or `ifconfig` will only last until the next reboot or network service restart. If you need to disable `eth0` permanently or across reboots, you will need to modify the network configuration files.
+
+For OpenBMC, or systems using NetworkManager or similar, you might need to update the configuration files located in `/etc/network/` or `/etc/sysconfig/network-scripts/` depending on your distribution and setup.
+
+### Summary
+
+- Use `ip link set eth0 down` to disable the interface.
+- Alternatively, use `ifconfig eth0 down` if `ifconfig` is available.
+- For persistent changes, update network configuration files accordingly.
+
+If you’re working with OpenBMC specifically, it’s always a good idea to consult the OpenBMC documentation or community resources for any distribution-specific details or tools used for network configuration.
+
+
+
+To check whether the `eth0` network interface is enabled or not, you can use several commands to inspect its status. Here’s how you can do it using different methods:
+
+### Using `ip` Command
+
+1. **Check the Status of `eth0`:**
+
+   ```sh
+   ip link show eth0
+   ```
+
+   Look for the `state` field in the output:
+   - If the interface is **enabled**, the state will be `UP`.
+   - If the interface is **disabled**, the state will be `DOWN`.
+
+   Example output when `eth0` is enabled:
+   ```
+   2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+       link/ether 00:1a:2b:3c:4d:5e brd ff:ff:ff:ff:ff:ff
+   ```
+
+   Example output when `eth0` is disabled:
+   ```
+   2: eth0: <BROADCAST,MULTICAST> mtu 1500 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 1000
+       link/ether 00:1a:2b:3c:4d:5e brd ff:ff:ff:ff:ff:ff
+   ```
+
+### Using `ifconfig` Command
+
+1. **Check the Status of `eth0`:**
+
+   ```sh
+   ifconfig eth0
+   ```
+
+   Look at the output:
+   - If the interface is **enabled**, it will display information like IP address, netmask, etc.
+   - If the interface is **disabled**, you might see output indicating that the interface is not found or doesn’t have any configuration.
+
+   Example output when `eth0` is enabled:
+   ```
+   eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+       inet 192.168.1.100  netmask 255.255.255.0  broadcast 192.168.1.255
+       ...
+   ```
+
+   Example output when `eth0` is disabled:
+   ```
+   eth0: flags=4098<BROADCAST,MULTICAST>  mtu 1500
+       ...
+   ```
+
+### Using `nmcli` Command (for NetworkManager-controlled systems)
+
+1. **Check the Status of `eth0`:**
+
+   ```sh
+   nmcli device status | grep eth0
+   ```
+
+   The output will show whether `eth0` is `connected`, `disconnected`, or in another state.
+
+   Example output when `eth0` is enabled:
+   ```
+   eth0   ethernet  connected  Wired connection 1  ...
+   ```
+
+   Example output when `eth0` is disabled:
+   ```
+   eth0   ethernet  disconnected  ...
+   ```
+
+### Using `ethtool` Command (for more detailed info)
+
+1. **Check the Status of `eth0`:**
+
+   ```sh
+   ethtool eth0
+   ```
+
+   Look for the `Link detected` field:
+   - If `Link detected: yes`, the interface is enabled.
+   - If `Link detected: no`, the interface is disabled or disconnected.
+
+   Example output when `eth0` is enabled:
+   ```
+   Settings for eth0:
+       ...
+       Link detected: yes
+   ```
+
+   Example output when `eth0` is disabled:
+   ```
+   Settings for eth0:
+       ...
+       Link detected: no
+   ```
+
+### Summary
+
+- Use `ip link show eth0` to see if `eth0` is `UP` or `DOWN`.
+- Use `ifconfig eth0` to check if `eth0` is displaying network configuration details.
+- Use `nmcli device status` for systems managed by NetworkManager.
+- Use `ethtool eth0` to get detailed information about link detection.
+
+These commands should help you determine the current state of the `eth0` interface on your system.
+
+
+
+To create a basic UDP server and client in C, you’ll need to use the Berkeley sockets API, which is available on Unix-like systems (including Linux). Below are simple examples of a UDP server and client.
+
+### UDP Server Code
+
+The UDP server listens for incoming messages from clients. When it receives a message, it can respond back to the client.
+
+```c
+// udp_server.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
+#define PORT 8080
+#define BUFFER_SIZE 1024
+
+int main() {
+    int sockfd;
+    struct sockaddr_in server_addr, client_addr;
+    char buffer[BUFFER_SIZE];
+    socklen_t addr_len = sizeof(client_addr);
+    ssize_t recv_len;
+
+    // Create socket
+    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+        perror("socket creation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Setup server address
+    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_port = htons(PORT);
+
+    // Bind socket to the address
+    if (bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+        perror("bind failed");
+        close(sockfd);
+        exit(EXIT_FAILURE);
+    }
+
+    printf("Server listening on port %d\n", PORT);
+
+    // Receive messages
+    while (1) {
+        recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE - 1, 0, (struct sockaddr *)&client_addr, &addr_len);
+        if (recv_len < 0) {
+            perror("recvfrom failed");
+            close(sockfd);
+            exit(EXIT_FAILURE);
+        }
+
+        buffer[recv_len] = '\0';  // Null-terminate the received data
+        printf("Received message: %s\n", buffer);
+
+        // Send response
+        if (sendto(sockfd, buffer, recv_len, 0, (struct sockaddr *)&client_addr, addr_len) < 0) {
+            perror("sendto failed");
+            close(sockfd);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    close(sockfd);
+    return 0;
+}
+```
+
+### UDP Client Code
+
+The UDP client sends a message to the server and waits for a response.
+
+```c
+// udp_client.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
+#define PORT 8080
+#define BUFFER_SIZE 1024
+
+int main() {
+    int sockfd;
+    struct sockaddr_in server_addr;
+    char buffer[BUFFER_SIZE];
+    socklen_t addr_len = sizeof(server_addr);
+    ssize_t recv_len;
+
+    // Create socket
+    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+        perror("socket creation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Setup server address
+    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = inet_addr("127.0.0.1"); // Server address (localhost)
+    server_addr.sin_port = htons(PORT);
+
+    while (1) {
+        printf("Enter message to send: ");
+        fgets(buffer, BUFFER_SIZE, stdin);
+
+        // Send message to server
+        if (sendto(sockfd, buffer, strlen(buffer), 0, (struct sockaddr *)&server_addr, addr_len) < 0) {
+            perror("sendto failed");
+            close(sockfd);
+            exit(EXIT_FAILURE);
+        }
+
+        // Receive response from server
+        recv_len = recvfrom(sockfd, buffer, BUFFER_SIZE - 1, 0, (struct sockaddr *)&server_addr, &addr_len);
+        if (recv_len < 0) {
+            perror("recvfrom failed");
+            close(sockfd);
+            exit(EXIT_FAILURE);
+        }
+
+        buffer[recv_len] = '\0';  // Null-terminate the received data
+        printf("Received response: %s\n", buffer);
+    }
+
+    close(sockfd);
+    return 0;
+}
+```
+
+### Compilation and Execution
+
+To compile these programs, use `gcc`:
+
+```bash
+gcc -o udp_server udp_server.c
+gcc -o udp_client udp_client.c
+```
+
+First, start the UDP server:
+
+```bash
+./udp_server
+```
+
+Then, in another terminal, start the UDP client:
+
+```bash
+./udp_client
+```
+
+### Explanation:
+
+- **Socket Creation**: `socket(AF_INET, SOCK_DGRAM, 0)` creates a UDP socket.
+- **Binding**: The server binds to a specific port using `bind()`.
+- **Sending and Receiving**: Use `sendto()` and `recvfrom()` for communication. The client sends a message and the server responds back.
+- **Address Structures**: `struct sockaddr_in` is used for defining addresses.
+
+This example is a basic demonstration. In a real-world application, you should handle additional concerns such as error handling, input validation, and potentially multi-threading for handling multiple clients.
+
+
+https://www.linuxcareers.com/resources/blog/2023/01/embedded-linux-interview-success-15-must-know-questions-and-answers/
+
+
+https://www.gnu.org/software/freeipmi/manpages/man8/ipmi-chassis.8.html
+
+https://www.gnu.org/software/freeipmi/manpages/man5/ipmi-config.conf.5.html
+
+
+ssh -i "vendor_scrap_sandbox_Sujith_092020.pem" root@ec2-34-204-44-124.compute-1.amazonaws.com
+
+
+
+
+&gpio0 {
+        gpio-line-names =
+        /*A0 - A7*/     "", "", "", "", "", "", "SIO_POWER_GOOD", "",
+        /*B0 - B7*/     "", "", "", "", "", "", "", "",
+        /*C0 - C7*/     "", "", "", "", "", "", "", "",
+        /*D0 - D7*/     "", "", "", "", "", "", "POWER_BUTTON", "RESET_BUTTON",
+        /*E0 - E7*/     "", "", "", "", "", "", "", "",
+        /*F0 - F7*/     "", "", "", "", "", "", "", "",
+        /*G0 - G7*/     "", "", "", "", "", "", "", "",
+        /*H0 - H7*/     "", "", "", "", "", "", "", "",
+        /*I0 - I7*/     "", "", "", "", "", "", "", "",
+        /*J0 - J7*/     "", "", "", "", "", "", "", "",
+        /*K0 - K7*/     "", "", "", "", "", "", "", "",
+        /*L0 - L7*/     "", "", "", "", "", "", "", "",
+        /*M0 - M7*/     "", "", "", "", "", "", "", "",
+        /*N0 - N7*/     "PS_PWROK", "", "POST_COMPLETE", "NMI_OUT", "RESET_OUT", "SIO_ONCONTROL", "SIO_S5", "POWER_OUT",
+        /*O0 - O7*/     "", "", "", "", "", "", "", "",
+        /*P0 - P7*/     "", "", "", "", "", "", "", "",
+        /*Q0 - Q7*/     "", "", "", "", "", "", "", "",
+        /*R0 - R7*/     "", "", "", "", "", "", "", "",
+        /*S0 - S7*/     "", "", "", "", "", "", "", "",
+        /*T0 - T7*/     "", "", "", "", "", "", "", "",
+        /*U0 - U7*/     "", "", "", "", "", "", "", "",
+        /*V0 - V7*/     "", "", "", "", "", "", "", "",
+        /*W0 - W7*/     "", "", "", "", "", "", "", "",
+        /*X0 - X7*/     "", "", "", "", "", "", "", "",
+        /*Y0 - Y7*/     "", "ID_BUTTON", "NMI_BUTTON", "", "", "", "", "",
+        /*Z0 - Z7*/     "", "", "", "", "", "", "", "",
+        /*AA0 - AA7*/   "", "", "", "", "", "", "", "",
+        /*AB0 - AB7*/   "", "", "", "", "", "", "", "",
+        /*AC0 - AC7*/   "", "", "", "", "", "", "", "";
+};
+
+
+
+https://www.nxp.com/docs/en/user-guide/LSDKUG_Rev20.12.pdf
+
+busctl get-property SERVICE OBJECT INTERFACE PROPERTY
+
+busctl get-property 	    D-BusSERVICE		      OBJECT (object path)		              INTERFACE 			    PROPERTY...
+
+busctl get-property -- xyz.openbmc_project.Gpio -- /xyz/openbmc_project/gpio/<gpio_name> -- xyz.openbmc_project.Gpio -- Value
+
+https://console.cloud.google.com/freetrial/signup/billing/IN?facet_url=https:%2F%2Fcloud.google.com%2Ffree&hl=en&facet_utm_source=google&facet_utm_campaign=japac-IN-all-en-dr-BKWS-all-core-trial-EXA-dr-1605216&facet_utm_medium=cpc&pli=1
+
+
+
+    {
+      "name": "HOST_SELECTOR",
+
+      "group_gpio_config": [
+        {
+          "pin": "N1",
+          "direction": "both"
+        },
+        {
+          "pin": "N2",
+          "direction": "both"
+        },
+        {
+          "pin": "N3",
+          "direction": "both"
+        },
+        {
+          "pin": "N4",
+          "direction": "both"
+        }
+      ]
+    }
+    
+    
+        {
+            "Address": "0x50",
+            "Bus": 7,
+            "Name": "AST2600 FRU",
+            "Type": "EEPROM"
+        },
+        {
+            "Direction": "Input",
+            "Index": 110,
+            "Name": "Reset_Button",
+            "Polarity": "Low",
+            "Type": "Gpio"
+        },
+
+        {
+            "Direction": "Out",
+            "Index": 111,
+            "Name": "Rese_Out",
+            "Polarity": "Low",
+            "Type": "Gpio"
+        },
+        {
+            "Direction": "Both",
+            "Index": 104,
+            "Name": "Power_gpio",
+            "Polarity": "Low",
+            "Type": "Gpio"
+        },
+        
+        
+ z&i2c0 {
+        status = "okay";
+        ipmb-dev@21{
+                compatible = "ipmb-dev";
+                reg = <(0x21 | I2C_OWN_SLAVE_ADDRESS)>;
+                i2c-protocol;
+        };
+
+};
+
+&i3c2 {
+        status = "disabled";
+        pinctrl-names = "default";
+        pinctrl-0 = <&pinctrl_i3c3_default>;
+
+        bus-context = /bits/ 8 <I3C_BUS_CONTEXT_JESD403>;
+        /* Renesas IMX3102 multiplexer w/ thermal sensor */
+        i3cmux@f {
+                compatible = "eeprom";
+                reg = <0xf 0x0 0x00000000>;
+        };
+
+        JESD300_SPD_I2C_MODE(2, 0, 52);
+        JESD300_SPD_I2C_MODE(2, 1, 53);
+};
+
+gpioj0_scl1_hvi3c3scl
+gpioj1_sda1_hvi3c3sda
+
+here if enable both i2c and i3c means what will happen
+
+
+[  650.234380] addr of ipmb device address is : 25
+[  650.251462] ipmb-dev : ipmb_slave_cb, event : 1, val: 0, line: 269
+[  650.259497] ipmb-dev : ipmb_slave_cb, event : 3, val: 28, line: 269
+[  650.266532] ipmb-dev : ipmb_slave_cb, event : 3, val: b8, line: 269
+[  650.273535] ipmb-dev : ipmb_slave_cb, event : 3, val: 4a, line: 269
+[  650.280535] ipmb-dev : ipmb_slave_cb, event : 3, val: c8, line: 269
+[  650.287540] ipmb-dev : ipmb_slave_cb, event : 3, val: 43, line: 269
+[  650.294543] ipmb-dev : ipmb_slave_cb, event : 3, val: 0, line: 269
+[  650.301444] ipmb-dev : ipmb_slave_cb, event : 3, val: 0, line: 269
+[  650.308349] ipmb-dev : ipmb_slave_cb, event : 3, val: 13, line: 269
+[  650.315348] ipmb-dev : ipmb_slave_cb, event : 3, val: 0, line: 269
+[  650.322250] ipmb-dev : ipmb_slave_cb, event : 3, val: 0, line: 269
+[  650.329150] ipmb-dev : ipmb_slave_cb, event : 3, val: ff, line: 269
+[  650.336148] ipmb-dev : ipmb_slave_cb, event : 3, val: 99, line: 269
+[  650.343145] ipmb-dev : ipmb_slave_cb, event : 4, val: 99, line: 269
+[  650.354982] addr of ipmb device address is : 25
+
